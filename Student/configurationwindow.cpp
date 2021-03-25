@@ -1,5 +1,7 @@
 #include "configurationwindow.hh"
 #include "ui_configurationwindow.h"
+#include "player.h"
+#include "game.h"
 
 #include <QDebug>
 
@@ -14,6 +16,9 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) :
     ui->player4NameInput->setEnabled(false);
 
     connect(ui->playerAmountSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConfigurationWindow::amountOfPlayersChanged);
+    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ConfigurationWindow::okPressed);
+
+
 }
 
 ConfigurationWindow::~ConfigurationWindow()
@@ -46,4 +51,15 @@ void ConfigurationWindow::amountOfPlayersChanged(int)
         ui->player3NameInput->setEnabled(true);
         ui->player4NameInput->setEnabled(true);
     }
+}
+
+void ConfigurationWindow::okPressed()
+{
+    // Initializes the static state of the game
+    std::shared_ptr<Interface::Game> g = std::make_shared<Interface::Game>();
+
+//    std::shared_ptr<Interface::Player> player1 = std::make_shared<Interface::Player>(g, 1, ui->player1NameInput->text());
+//    std::shared_ptr<Interface::Player> player2 = std::make_shared<Interface::Player>(g, 2, ui->player2NameInput->text());
+//    g->addPlayer(ui->player1NameInput->text());
+//    g->addPlayer(ui->player2NameInput->text());
 }

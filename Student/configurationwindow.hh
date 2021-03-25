@@ -3,10 +3,13 @@
 
 #include <QDialog>
 #include <QSpinBox>
+#include <vector>
 
 namespace Ui {
 class ConfigurationWindow;
 }
+
+class Player;
 
 class ConfigurationWindow : public QDialog
 {
@@ -21,9 +24,11 @@ signals:
 
 public slots:
     void amountOfPlayersChanged(int);
+    void okPressed();
 
 private:
     Ui::ConfigurationWindow *ui;
+    std::vector<std::shared_ptr<Player> > players__;
 };
 
 #endif // CONFIGURATIONWINDOW_HH

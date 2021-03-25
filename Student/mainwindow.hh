@@ -7,6 +7,7 @@
 
 #include "cardinterface.h"
 #include "simplecarditem.hh"
+#include "game.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,9 +23,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene* mScene;
-
-    std::vector<std::vector<SimpleCardItem*>> mCards;
 };
 
 #endif // MAINWINDOW_HH
