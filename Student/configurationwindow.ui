@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ConfigurationWindow</class>
  <widget class="QDialog" name="ConfigurationWindow">
@@ -5,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>240</width>
+    <width>625</width>
     <height>320</height>
    </rect>
   </property>
@@ -15,10 +16,10 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>10</y>
-     <width>81</width>
-     <height>301</height>
+     <x>210</x>
+     <y>240</y>
+     <width>171</width>
+     <height>61</height>
     </rect>
    </property>
    <property name="orientation">
@@ -27,7 +28,168 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
+   <property name="centerButtons">
+    <bool>false</bool>
+   </property>
   </widget>
+  <widget class="QLineEdit" name="player1NameInput">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>90</y>
+     <width>113</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="maxLength">
+    <number>12</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="player2NameInput">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>120</y>
+     <width>113</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="maxLength">
+    <number>12</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="player3NameInput">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>150</y>
+     <width>113</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="maxLength">
+    <number>12</number>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="player4NameInput">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>180</y>
+     <width>113</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="maxLength">
+    <number>12</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player1Label">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>90</y>
+     <width>63</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Player 1:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player2Label">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>120</y>
+     <width>63</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Player 2:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player3Label">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>150</y>
+     <width>63</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Player 3:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="player4Label">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>180</y>
+     <width>63</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Player 4:</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="playerAmountSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>60</y>
+     <width>35</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
+   <property name="maximum">
+    <number>4</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="amountOfPlayersLabel">
+   <property name="geometry">
+    <rect>
+     <x>105</x>
+     <y>63</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Amount of players (0-4):</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>20</y>
+     <width>331</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Choose the amount of players and assign names.</string>
+   </property>
+  </widget>
+  <zorder>player2NameInput</zorder>
+  <zorder>buttonBox</zorder>
+  <zorder>player1NameInput</zorder>
+  <zorder>player3NameInput</zorder>
+  <zorder>player4NameInput</zorder>
+  <zorder>player1Label</zorder>
+  <zorder>player2Label</zorder>
+  <zorder>player3Label</zorder>
+  <zorder>player4Label</zorder>
+  <zorder>playerAmountSpinBox</zorder>
+  <zorder>amountOfPlayersLabel</zorder>
+  <zorder>label</zorder>
  </widget>
  <resources/>
  <connections>

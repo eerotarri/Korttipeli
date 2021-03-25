@@ -2,6 +2,7 @@
 #define CONFIGURATIONWINDOW_HH
 
 #include <QDialog>
+#include <QSpinBox>
 
 namespace Ui {
 class ConfigurationWindow;
@@ -14,6 +15,12 @@ class ConfigurationWindow : public QDialog
 public:
     explicit ConfigurationWindow(QWidget *parent = nullptr);
     ~ConfigurationWindow();
+
+signals:
+    void valueChanged(int);
+
+public slots:
+    void amountOfPlayersChanged(int);
 
 private:
     Ui::ConfigurationWindow *ui;
