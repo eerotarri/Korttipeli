@@ -55,8 +55,6 @@ void ConfigurationWindow::amountOfPlayersChanged(int)
 
 void ConfigurationWindow::okPressed()
 {
-    // Initializes the static state of the game
-    std::shared_ptr<Interface::Game> g = std::make_shared<Interface::Game>();
 
 //    std::shared_ptr<Interface::Player> player1 = std::make_shared<Interface::Player>(g, 1, ui->player1NameInput->text());
 //    std::shared_ptr<Interface::Player> player2 = std::make_shared<Interface::Player>(g, 2, ui->player2NameInput->text());
