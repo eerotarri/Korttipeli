@@ -6,6 +6,7 @@
 #include "settingsreader.h"
 #include <QFile>
 #include <QGraphicsView>
+#include <QLabel>
 
 #include <QDebug>
 
@@ -14,18 +15,44 @@ static int CARD_HEIGHT = 100;
 static int PADDING_Y = 20;
 static int PADDING_X = 7;
 
+const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     // We need a graphics scene in which to draw rectangles
-    scene_ = new QGraphicsScene(this);
+    scene_1 = new QGraphicsScene(ui->graphicsView);
+    scene_2 = new QGraphicsScene(ui->graphicsView_2);
+    scene_3 = new QGraphicsScene(ui->graphicsView_3);
+    scene_4 = new QGraphicsScene(ui->graphicsView_4);
+    scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
-    ui->graphicsView->setScene(scene_);
-    ui->graphicsView->show();
+    ui->graphicsView->setScene(scene_1);
+    ui->graphicsView_2->setScene(scene_2);
+    ui->graphicsView_3->setScene(scene_3);
+    ui->graphicsView_4->setScene(scene_4);
+    ui->graphicsView_hand->setScene(scene_hand);
 
-    //ui->graphicsView->setGeometry(20, 20, 400, 400);
+    QLabel* label1 = new QLabel();
+    label1->setText(LOCATIONS.at(0));
+    QLabel* label2 = new QLabel();
+    label2->setText(LOCATIONS.at(1));
+    QLabel* label3 = new QLabel();
+    label3->setText(LOCATIONS.at(2));
+    QLabel* label4 = new QLabel();
+    label4->setText(LOCATIONS.at(3));
+    QLabel* current_player_hand = new QLabel();
+    current_player_hand->setText("HAND");
+
+    scene_1->addWidget(label1);
+    scene_2->addWidget(label2);
+    scene_3->addWidget(label3);
+    scene_4->addWidget(label4);
+    scene_hand->addWidget(current_player_hand);
+
+
 
     ConfigurationWindow c;
     c.exec();
@@ -39,9 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
     g->addPlayer(QString::fromStdString("Niilo"));
     g->addPlayer(QString::fromStdString("Eero"));
 
-    std::vector<QString> Locations = {"Castle", "Marketplace", "Forest", "Slums"};
+
     for (unsigned short int i = 0; i < 4; i++) {
-        std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i, Locations.at(i));
+        std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i, LOCATIONS.at(i));
         g->addLocation(new_location);
     }
 

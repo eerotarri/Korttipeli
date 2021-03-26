@@ -50,7 +50,7 @@
    <widget class="QGraphicsView" name="graphicsView_3">
     <property name="geometry">
      <rect>
-      <x>280</x>
+      <x>9</x>
       <y>230</y>
       <width>270</width>
       <height>220</height>
@@ -60,14 +60,14 @@
    <widget class="QGraphicsView" name="graphicsView_4">
     <property name="geometry">
      <rect>
-      <x>9</x>
+      <x>280</x>
       <y>230</y>
       <width>270</width>
       <height>220</height>
      </rect>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView_5">
+   <widget class="QGraphicsView" name="graphicsView_hand">
     <property name="geometry">
      <rect>
       <x>10</x>

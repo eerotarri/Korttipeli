@@ -27,7 +27,11 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QGraphicsScene* scene_;
+    QGraphicsScene* scene_1;
+    QGraphicsScene* scene_2;
+    QGraphicsScene* scene_3;
+    QGraphicsScene* scene_4;
+    QGraphicsScene* scene_hand;
 };
 
 #endif // MAINWINDOW_HH
