@@ -5,6 +5,9 @@
 #include "location.h"
 #include "settingsreader.h"
 #include <QFile>
+#include <QGraphicsView>
+
+#include <QDebug>
 
 static int CARD_WIDTH = 70;
 static int CARD_HEIGHT = 100;
@@ -19,11 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
     // We need a graphics scene in which to draw rectangles
     scene_ = new QGraphicsScene(this);
 
+    ui->graphicsView->setScene(scene_);
+    ui->graphicsView->show();
 
-
+    //ui->graphicsView->setGeometry(20, 20, 400, 400);
 
     ConfigurationWindow c;
     c.exec();
+
+//    qDebug() << ui->label;
+
 
     // Initializes the static state of the game
     std::shared_ptr<Interface::Game> g = std::make_shared<Interface::Game>();
@@ -36,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
         std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i, Locations.at(i));
         g->addLocation(new_location);
     }
+
+
 }
 
 MainWindow::~MainWindow()
