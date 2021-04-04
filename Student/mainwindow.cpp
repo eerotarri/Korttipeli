@@ -4,6 +4,8 @@
 #include "player.h"
 #include "location.h"
 #include "settingsreader.h"
+#include "runner.h"
+
 #include <QFile>
 #include <QGraphicsView>
 #include <QLabel>
@@ -35,24 +37,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView_4->setScene(scene_4);
     ui->graphicsView_hand->setScene(scene_hand);
 
-    QLabel* label1 = new QLabel();
-    label1->setText(LOCATIONS.at(0));
-    label1->setGeometry(10, 10, 20, 10);
-    QLabel* label2 = new QLabel();
-    label2->setText(LOCATIONS.at(1));
-    QLabel* label3 = new QLabel();
-    label3->setText(LOCATIONS.at(2));
-    QLabel* label4 = new QLabel();
-    label4->setText(LOCATIONS.at(3));
-    QLabel* current_player_hand = new QLabel();
-    current_player_hand->setText("HAND");
+//    QLabel* label1 = new QLabel();
+//    label1->setText(LOCATIONS.at(0));
+//    QLabel* label2 = new QLabel();
+//    label2->setText(LOCATIONS.at(1));
 
-    scene_1->addWidget(label1);
-    scene_2->addWidget(label2);
-    scene_3->addWidget(label3);
-    scene_4->addWidget(label4);
-    scene_hand->addWidget(current_player_hand);
+//    QLabel* label3 = new QLabel();
+//    label3->setText(LOCATIONS.at(2));
+//    QLabel* label4 = new QLabel();
+//    label4->setText(LOCATIONS.at(3));
+//    QLabel* current_player_hand = new QLabel();
+//    current_player_hand->setText("HAND");
 
+//    scene_1->addWidget(label1);
+//    scene_2->addWidget(label2);
+//    scene_3->addWidget(label3);
+//    scene_4->addWidget(label4);
+//    scene_hand->addWidget(current_player_hand);
 
 
     ConfigurationWindow c;
@@ -63,6 +64,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Initializes the static state of the game
     std::shared_ptr<Interface::Game> g = std::make_shared<Interface::Game>();
+
+    // Initializes the static runner
+    Interface::Runner r(g);
 
     g->addPlayer(QString::fromStdString("Niilo"));
     g->addPlayer(QString::fromStdString("Eero"));

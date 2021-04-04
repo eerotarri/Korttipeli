@@ -6,6 +6,7 @@ QT += core gui widgets network multimedia
 CONFIG += c++14
 
 SOURCES += \
+    agent.cpp \
     configurationwindow.cpp \
     main.cc \
     mainwindow.cpp
@@ -39,5 +40,6 @@ FORMS += \
     mainwindow.ui
 
 HEADERS += \
+    agent.hh \
     configurationwindow.hh \
     mainwindow.hh
