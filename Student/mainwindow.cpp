@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QLabel* label1 = new QLabel();
     label1->setText(LOCATIONS.at(0));
+    label1->setGeometry(10, 10, 20, 10);
     QLabel* label2 = new QLabel();
     label2->setText(LOCATIONS.at(1));
     QLabel* label3 = new QLabel();
