@@ -24,6 +24,9 @@ public:
 
     void setCardDimensions(int width, int height, int padding_x, int padding_y);
 
+public slots:
+    void toimii();
+
 private:
     Ui::MainWindow *ui;
 

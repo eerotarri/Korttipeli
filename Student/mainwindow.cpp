@@ -5,9 +5,11 @@
 #include "location.h"
 #include "settingsreader.h"
 #include "runner.h"
+#include "agent.hh"
 
 #include <QFile>
 #include <QGraphicsView>
+#include <QGraphicsItem>
 #include <QLabel>
 
 #include <QDebug>
@@ -56,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    scene_hand->addWidget(current_player_hand);
 
 
+
     ConfigurationWindow c;
     c.exec();
 
@@ -77,7 +80,14 @@ MainWindow::MainWindow(QWidget *parent) :
         g->addLocation(new_location);
     }
 
+    QPushButton* punanen = new QPushButton();
+    scene_hand->addWidget(punanen);
+    punanen->setParent(ui->graphicsView_hand);
+    punanen->setGeometry(-451, 0, 50, 50);
 
+    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
+
+//    Agent* punainen_pallero = new Agent(punanen);
 }
 
 MainWindow::~MainWindow()
@@ -91,4 +101,9 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
     CARD_HEIGHT = height;
     PADDING_X = padding_x;
     PADDING_Y = padding_y;
+}
+
+void MainWindow::toimii()
+{
+    qDebug() << "toimmii";
 }
