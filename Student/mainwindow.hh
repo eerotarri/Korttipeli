@@ -24,7 +24,9 @@ public:
 
     void setCardDimensions(int width, int height, int padding_x, int padding_y);
 
-    void addCard();
+    void addCardToPlayer(std::shared_ptr<Interface::Player>);
+    void showCardsInHand();
+
 
 public slots:
     void toimii();
@@ -32,11 +34,19 @@ public slots:
 private:
     Ui::MainWindow *ui;
 
+    std::shared_ptr<Interface::Game> game_;
+
+    std::shared_ptr<Interface::Player> currentPlayer_;
+
     QGraphicsScene* scene_1;
     QGraphicsScene* scene_2;
     QGraphicsScene* scene_3;
     QGraphicsScene* scene_4;
     QGraphicsScene* scene_hand;
+
+    void initializeLocations();
+    void setupUserInterface();
+    void addPlayers();
 };
 
 #endif // MAINWINDOW_HH
