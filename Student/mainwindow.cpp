@@ -60,7 +60,8 @@ void MainWindow::addCardToPlayer(std::shared_ptr<Interface::Player>)
 {
     // Adds 3 cards to each player
     for (auto player : game_->players()) {
-        std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>();
+        QPushButton* assigned_button = new QPushButton();
+        std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button);
         for (int i = 0; i < 3; i++) {
             player->addCard(punainen_pallero);
         }
@@ -71,7 +72,7 @@ void MainWindow::showCardsInHand()
 {
     int i = 0;
     for (auto card : currentPlayer_->cards()) {
-        QPushButton* assigned_button = new QPushButton();
+        QPushButton* assigned_button = card->getButton();
         scene_hand->addWidget(assigned_button);
         assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
 
