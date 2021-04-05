@@ -5,16 +5,13 @@
 #include "QPushButton"
 #include "location.h"
 
-struct ButtonInfo{
-    int x_;
-    int y_;
-    QPushButton* button_;
-};
 
 class Agent: public Interface::AgentInterface
 {
 public:
-    explicit Agent(QPushButton* button = nullptr);
+    explicit Agent(QPushButton* button = nullptr, int x_in_scene = 0, int y_in_scene = 0,
+                   std::weak_ptr<Interface::Player> ownr = {}, std::weak_ptr<Interface::Location> lctn = {},
+                   unsigned short pts = 0);
     virtual ~Agent();
 
     virtual QString name() const;
@@ -32,9 +29,10 @@ public:
     virtual void modifyConnections(short change);
 
 private:
+    // resursseihin paintilla väännetyt tikku-ukot kuvaamaan agentteja?
+    // olemassa konstruktori napille johon embedataan kuva
+    // taustalle voi tiesti tulla väriä
     const QColor color_ = Qt::red;
-
-    ButtonInfo agent_selected_;
 
     QString name_;
 
@@ -49,6 +47,12 @@ private:
     unsigned short connections_;
 
     bool isCommon_;
+
+    int x_;
+
+    int y_;
+
+    QPushButton* button_;
 };
 
 #endif // AGENT_HH
