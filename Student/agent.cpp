@@ -1,9 +1,16 @@
 #include "agent.hh"
 
-Agent::Agent(QPushButton* button):
-    name_("vittu")
+Agent::Agent(QPushButton* button, int x_in_scene, int y_in_scene,
+             std::weak_ptr<Interface::Player> ownr, std::weak_ptr<Interface::Location> lctn,
+             unsigned short pts):
+    name_("card_name"), title_("card_title"),typeName_("card_type"), isCommon_(true)
 {
-    agent_selected_.button_ = button;
+    button_ = button;
+    x_ = x_in_scene;
+    y_ = y_in_scene;
+    location_ = lctn;
+    connections_ = pts;
+    owner_ = ownr;
 }
 
 Agent::~Agent()
@@ -38,7 +45,7 @@ std::weak_ptr<Interface::Player> Agent::owner() const
 
 void Agent::setOwner(std::weak_ptr<Interface::Player> owner)
 {
-    // Stub
+    owner_ = owner;
 }
 
 bool Agent::isCommon() const
@@ -68,5 +75,5 @@ void Agent::setConnections(unsigned short connections)
 
 void Agent::modifyConnections(short change)
 {
-    // Stub
+    connections_ += change;
 }
