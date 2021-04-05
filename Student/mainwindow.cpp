@@ -80,12 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
         g->addLocation(new_location);
     }
 
-    QPushButton* punanen = new QPushButton();
-    scene_hand->addWidget(punanen);
-    punanen->setParent(ui->graphicsView_hand);
-    punanen->setGeometry(-451, 0, 50, 50);
-
-    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
+    addCard();
 
 //    Agent* punainen_pallero = new Agent(punanen);
 }
@@ -101,6 +96,16 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
     CARD_HEIGHT = height;
     PADDING_X = padding_x;
     PADDING_Y = padding_y;
+}
+
+void MainWindow::addCard()
+{
+    QPushButton* punanen = new QPushButton();
+    scene_hand->addWidget(punanen);
+    punanen->setParent(ui->graphicsView_hand);
+    punanen->setGeometry(-451, 0, CARD_WIDTH, CARD_HEIGHT);
+
+    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
 }
 
 void MainWindow::toimii()

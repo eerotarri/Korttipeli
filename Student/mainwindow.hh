@@ -24,6 +24,8 @@ public:
 
     void setCardDimensions(int width, int height, int padding_x, int padding_y);
 
+    void addCard();
+
 public slots:
     void toimii();
 
