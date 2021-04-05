@@ -5,6 +5,9 @@
 #include <vector>
 #include <memory>
 #include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QGraphicsView>
+#include <QPushButton>
 
 #include "cardinterface.h"
 #include "simplecarditem.hh"
@@ -29,7 +32,8 @@ public:
 
 
 public slots:
-    void toimii();
+    void agentClicked();
+    void moveAction();
 
 private:
     Ui::MainWindow *ui;
@@ -42,6 +46,7 @@ private:
     QGraphicsScene* scene_2;
     QGraphicsScene* scene_3;
     QGraphicsScene* scene_4;
+    QGraphicsScene* scene_actions;
     QGraphicsScene* scene_hand;
 
     void initializeLocations();

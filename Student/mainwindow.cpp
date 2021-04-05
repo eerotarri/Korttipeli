@@ -1,4 +1,4 @@
-#include "mainwindow.hh"
+﻿#include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "configurationwindow.hh"
 #include "player.h"
@@ -40,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
     currentPlayer_ = game_->currentPlayer();
 
     addCardToPlayer(game_->players().at(0));
-
     showCardsInHand();
 }
 
@@ -74,17 +73,32 @@ void MainWindow::showCardsInHand()
     for (auto card : currentPlayer_->cards()) {
         QPushButton* assigned_button = new QPushButton();
         scene_hand->addWidget(assigned_button);
-        assigned_button->setParent(ui->graphicsView_hand);
-        assigned_button->setGeometry(-450 + (CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+        assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
+
+        connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);
         i++;
     }
 
-//    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
+    //    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
 }
 
-void MainWindow::toimii()
+void MainWindow::agentClicked()
 {
-    qDebug() << "toimmii";
+    qDebug() << "klikattu";
+    QPushButton* liiku = new QPushButton("Move to");
+    scene_actions->addWidget(liiku);
+    liiku->setGeometry(0, 0, 239, 50);
+
+    connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
+}
+
+void MainWindow::moveAction()
+{
+
+
+    QPushButton* action = new QPushButton("huora");
+    scene_actions->addWidget(action);
+    action->setGeometry(0, 50, 239, 50);
 }
 
 void MainWindow::initializeLocations()
@@ -104,12 +118,16 @@ void MainWindow::setupUserInterface()
     scene_2 = new QGraphicsScene(ui->graphicsView_2);
     scene_3 = new QGraphicsScene(ui->graphicsView_3);
     scene_4 = new QGraphicsScene(ui->graphicsView_4);
+    scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
     ui->graphicsView->setScene(scene_1);
     ui->graphicsView_2->setScene(scene_2);
     ui->graphicsView_3->setScene(scene_3);
     ui->graphicsView_4->setScene(scene_4);
+    ui->graphicsView_actions->setScene(scene_actions);
+    ui->graphicsView_actions->setAlignment(Qt::AlignTop);
+
     ui->graphicsView_hand->setScene(scene_hand);
 }
 
