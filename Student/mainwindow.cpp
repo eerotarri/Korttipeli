@@ -60,10 +60,14 @@ void MainWindow::addCardToPlayer(std::shared_ptr<Interface::Player>)
 {
     // Adds 3 cards to each player
     for (auto player : game_->players()) {
-        QPushButton* assigned_button = new QPushButton();
-        std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button);
+
         for (int i = 0; i < 3; i++) {
+            QPushButton* assigned_button = new QPushButton();
+
+            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>();
+            punainen_pallero->setButton(assigned_button);
             player->addCard(punainen_pallero);
+
         }
     }
 }
@@ -71,9 +75,10 @@ void MainWindow::addCardToPlayer(std::shared_ptr<Interface::Player>)
 void MainWindow::showCardsInHand()
 {
     int i = 0;
+
     for (auto card : currentPlayer_->cards()) {
-        QPushButton* assigned_button = card->getButton();
-        scene_hand->addWidget(assigned_button);
+        QPushButton* assigned_button; // tähän jäätiin. pitäs väsätä vastaava tietorakenne jolle pystyy kutsua agentin metodeita joista saa nappeja
+        scene_hand->addWidget(assigned_button); // ufoerror
         assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
 
         connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);

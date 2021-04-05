@@ -58,6 +58,16 @@ std::weak_ptr<Interface::Location> Agent::placement() const
     return location_;
 }
 
+void Agent::setButton(QPushButton *button)
+{
+    button_ = button;
+}
+
+QPushButton *Agent::getButton()
+{
+    return button_;
+}
+
 void Agent::setPlacement(std::weak_ptr<Interface::Location> placement)
 {
     location_ = placement;

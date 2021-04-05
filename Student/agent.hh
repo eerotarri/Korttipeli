@@ -22,7 +22,8 @@ public:
     virtual void setOwner(std::weak_ptr<Interface::Player> owner);
     virtual bool isCommon() const;
     virtual std::weak_ptr<Interface::Location> placement() const;
-
+    virtual void setButton(QPushButton* button);
+    virtual QPushButton* getButton();
     virtual void setPlacement(std::weak_ptr<Interface::Location> placement);
     virtual unsigned short connections() const;
     virtual void setConnections(unsigned short connections);
