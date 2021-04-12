@@ -76,6 +76,7 @@ void MainWindow::showCardsInHand()
         scene_hand->addWidget(assigned_button);
         assigned_button->setParent(ui->graphicsView_hand);
         assigned_button->setGeometry(-450 + (CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+        assigned_button->show();
         i++;
     }
 

@@ -15,6 +15,8 @@ public:
     virtual ~Agent();
 
     virtual QString name() const;
+    QPushButton* getButton();
+    void setButton(QPushButton* button);
     virtual QString typeName() const;
     virtual QString title() const;
     virtual std::weak_ptr<Interface::Location> location() const;
