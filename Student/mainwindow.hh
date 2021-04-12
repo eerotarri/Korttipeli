@@ -18,6 +18,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class Agent;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -35,6 +37,7 @@ public:
 public slots:
     void agentClicked();
     void moveAction();
+    void actionClicked();
     //void Ass();
 
 private:
@@ -45,6 +48,8 @@ private:
     std::shared_ptr<Interface::Player> currentPlayer_;
 
     std::map<QString, std::vector<QPushButton*>> playerCards_;
+
+    Agent* activeAgent_;
 
     QGraphicsScene* scene_1;
     QGraphicsScene* scene_2;

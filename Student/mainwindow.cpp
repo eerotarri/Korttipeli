@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include <QGraphicsProxyWidget>
 #include <QLabel>
 
 #include <QDebug>
@@ -35,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Initializes the static state of the game
     game_ = std::make_shared<Interface::Game>();
+
+    // Initialize locations
+    initializeLocations();
 
     // Initializes the static runner
     Interface::Runner r(game_);
@@ -70,11 +74,11 @@ void MainWindow::addCardToPlayer()
     for (auto player : game_->players()) {
 
         for (int i = 0; i < 3; i++) {
-            QPushButton* assigned_button = new QPushButton(QString::fromStdString(std::to_string(i + 1)));
+            QString name = player->name() + QString::fromStdString("\n" + std::to_string(i + 1));
+            QPushButton* assigned_button = new QPushButton(name);
 
-            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>();
-//            punainen_pallero->setPlacement();
-            punainen_pallero->setButton(assigned_button);
+            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0, player, game_->locations().at(0), 0, name);
+
             player->addCard(punainen_pallero);
             playerCards_[playerName].push_back(assigned_button);
         }
@@ -106,6 +110,23 @@ void MainWindow::agentClicked()
 {
     clearScene(scene_actions);
 
+    auto button = qobject_cast<QPushButton *>(sender());
+
+    auto vittu = game_->currentPlayer()->cards().at(0);
+
+    for (auto agent : currentPlayer_->cards()) {
+        if (agent->name() == button->text()) {
+            vittu = agent;
+        }
+    }
+
+
+    if (Agent* agent = dynamic_cast<Agent*>(vittu.get()))  {
+         activeAgent_ = agent;
+    }
+
+    qDebug() << button->text();
+
     QPushButton* liiku = new QPushButton("Move to");
     scene_actions->addWidget(liiku);
     liiku->setGeometry(0, 0, 239, 50);
@@ -117,13 +138,42 @@ void MainWindow::moveAction()
 {
     clearScene(scene_actions);
 
+
     int i = 0;
     for (auto location : LOCATIONS) {
         QPushButton* action = new QPushButton(location);
         scene_actions->addWidget(action);
         action->setGeometry(0, ACTION_HEIGHT * i, ACTION_WIDTH, ACTION_HEIGHT);
+        connect(action, &QPushButton::clicked, this, &MainWindow::actionClicked);
+
         ++i;
     }
+
+}
+
+void MainWindow::actionClicked()
+{
+    auto button = qobject_cast<QPushButton *>(sender());
+
+    activeAgent_->getButton()->hide();
+    QGraphicsProxyWidget* proxy = activeAgent_->getButton()->graphicsProxyWidget();
+
+    if (button->text() == "Castle") {
+        scene_1->addItem(proxy);
+    } else if (button->text() == "Marketplace") {
+        scene_2->addItem(proxy);
+    } else if (button->text() == "Forest") {
+        scene_3->addItem(proxy);
+    } else if (button->text() == "Slums") {
+        scene_4->addItem(proxy);
+    }
+
+
+
+    activeAgent_->getButton()->show();
+
+
+
 
 }
 
@@ -138,13 +188,13 @@ void MainWindow::initializeLocations()
     game_->addLocation(new_location);
 
     // Initializes locations to the game
-    for (unsigned short int i = 1; i < 5; i++) {
-        std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i, LOCATIONS.at(i));
+    for (unsigned short int i = 0; i < 4; i++) {
+        std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i + 1, LOCATIONS.at(i));
         game_->addLocation(new_location);
     }
 
     for (auto location : game_->locations()) {
-        qDebug() << location->name();
+        qDebug() << location->name() << location->id();
     }
 }
 

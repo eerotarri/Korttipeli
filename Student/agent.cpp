@@ -2,8 +2,8 @@
 
 Agent::Agent(QPushButton* button, int x_in_scene, int y_in_scene,
              std::weak_ptr<Interface::Player> ownr, std::weak_ptr<Interface::Location> lctn,
-             unsigned short pts):
-    name_("card_name"), title_("card_title"),typeName_("card_type"), isCommon_(true)
+             unsigned short pts, QString name, QString title, QString typeName):
+    name_(name), title_(title),typeName_(typeName), isCommon_(true)
 {
     button_ = button;
     x_ = x_in_scene;
