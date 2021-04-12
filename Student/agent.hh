@@ -15,8 +15,6 @@ public:
     virtual ~Agent();
 
     virtual QString name() const;
-    QPushButton* getButton();
-    void setButton(QPushButton* button);
     virtual QString typeName() const;
     virtual QString title() const;
     virtual std::weak_ptr<Interface::Location> location() const;
@@ -24,16 +22,17 @@ public:
     virtual void setOwner(std::weak_ptr<Interface::Player> owner);
     virtual bool isCommon() const;
     virtual std::weak_ptr<Interface::Location> placement() const;
-
+    virtual void setButton(QPushButton* button);
+    virtual QPushButton* getButton();
     virtual void setPlacement(std::weak_ptr<Interface::Location> placement);
     virtual unsigned short connections() const;
     virtual void setConnections(unsigned short connections);
     virtual void modifyConnections(short change);
 
 private:
-    // resursseihin paintilla väännetyt tikku-ukot kuvaamaan agentteja?
+    // resursseihin paintilla v��nnetyt tikku-ukot kuvaamaan agentteja?
     // olemassa konstruktori napille johon embedataan kuva
-    // taustalle voi tiesti tulla väriä
+    // taustalle voi tiesti tulla v�ri�
     const QColor color_ = Qt::red;
 
     QString name_;

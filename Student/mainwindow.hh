@@ -5,10 +5,14 @@
 #include <vector>
 #include <memory>
 #include <QGraphicsScene>
+#include <QGraphicsItem>
+#include <QGraphicsView>
+#include <QPushButton>
 
 #include "cardinterface.h"
 #include "simplecarditem.hh"
 #include "game.h"
+#include "map"
 
 namespace Ui {
 class MainWindow;
@@ -26,10 +30,12 @@ public:
 
     void addCardToPlayer(std::shared_ptr<Interface::Player>);
     void showCardsInHand();
-
+    void setNewLocation();
 
 public slots:
-    void toimii();
+    void agentClicked();
+    void moveAction();
+    //void Ass();
 
 private:
     Ui::MainWindow *ui;
@@ -38,10 +44,13 @@ private:
 
     std::shared_ptr<Interface::Player> currentPlayer_;
 
+    std::map<QString, std::vector<QPushButton*>> playerCards_;
+
     QGraphicsScene* scene_1;
     QGraphicsScene* scene_2;
     QGraphicsScene* scene_3;
     QGraphicsScene* scene_4;
+    QGraphicsScene* scene_actions;
     QGraphicsScene* scene_hand;
 
     void initializeLocations();

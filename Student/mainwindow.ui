@@ -17,16 +17,6 @@
    <property name="cursor">
     <cursorShape>ArrowCursor</cursorShape>
    </property>
-   <widget class="QTextBrowser" name="textBrowser">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>10</y>
-      <width>241</width>
-      <height>571</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
@@ -150,6 +140,16 @@
     </property>
     <property name="text">
      <string>HAND</string>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView_actions">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>10</y>
+      <width>241</width>
+      <height>571</height>
+     </rect>
     </property>
    </widget>
   </widget>

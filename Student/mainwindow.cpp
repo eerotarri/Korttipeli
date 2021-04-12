@@ -1,4 +1,4 @@
-#include "mainwindow.hh"
+﻿#include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "configurationwindow.hh"
 #include "player.h"
@@ -40,7 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
     currentPlayer_ = game_->currentPlayer();
 
     addCardToPlayer(game_->players().at(0));
-
+    qDebug() << "ass";
+    for (auto& p : playerCards_) {
+        qDebug() << p.first;
+    }
     showCardsInHand();
 }
 
@@ -60,32 +63,61 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
 void MainWindow::addCardToPlayer(std::shared_ptr<Interface::Player>)
 {
     // Adds 3 cards to each player
+    QString playerName = "Niilo";
     for (auto player : game_->players()) {
-        std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>();
+
         for (int i = 0; i < 3; i++) {
+            QPushButton* assigned_button = new QPushButton();
+
+            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>();
+            punainen_pallero->setButton(assigned_button);
             player->addCard(punainen_pallero);
+            playerCards_[playerName].push_back(assigned_button);
         }
+        QString playerName = "Eero";
     }
 }
 
 void MainWindow::showCardsInHand()
 {
     int i = 0;
+
     for (auto card : currentPlayer_->cards()) {
-        QPushButton* assigned_button = new QPushButton();
+        QString currentPlayerName = game_->currentPlayer()->name();
+        qDebug() << currentPlayerName << "test";
+        QPushButton* assigned_button = playerCards_.at(currentPlayerName).at(i);
         scene_hand->addWidget(assigned_button);
-        assigned_button->setParent(ui->graphicsView_hand);
-        assigned_button->setGeometry(-450 + (CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
-        assigned_button->show();
+        assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
+
+        connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);
         i++;
+
     }
 
-//    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
+    //    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
 }
 
-void MainWindow::toimii()
+void MainWindow::agentClicked()
 {
-    qDebug() << "toimmii";
+    qDebug() << "klikattu";
+    QPushButton* liiku = new QPushButton("Move to");
+    scene_actions->addWidget(liiku);
+    liiku->setGeometry(0, 0, 239, 50);
+
+    connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
+}
+
+void MainWindow::moveAction()
+{
+
+
+    QPushButton* action = new QPushButton("huora");
+    scene_actions->addWidget(action);
+    action->setGeometry(0, 50, 239, 50);
+}
+
+void setNewLocation() {
+    // idea: omat skenet kullekin pelaajalle joista kerrallaan vaan yks ei lukittu?
 }
 
 void MainWindow::initializeLocations()
@@ -105,12 +137,16 @@ void MainWindow::setupUserInterface()
     scene_2 = new QGraphicsScene(ui->graphicsView_2);
     scene_3 = new QGraphicsScene(ui->graphicsView_3);
     scene_4 = new QGraphicsScene(ui->graphicsView_4);
+    scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
     ui->graphicsView->setScene(scene_1);
     ui->graphicsView_2->setScene(scene_2);
     ui->graphicsView_3->setScene(scene_3);
     ui->graphicsView_4->setScene(scene_4);
+    ui->graphicsView_actions->setScene(scene_actions);
+    ui->graphicsView_actions->setAlignment(Qt::AlignTop);
+
     ui->graphicsView_hand->setScene(scene_hand);
 }
 
