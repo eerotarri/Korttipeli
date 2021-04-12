@@ -43,7 +43,10 @@ MainWindow::MainWindow(QWidget *parent) :
     currentPlayer_ = game_->currentPlayer();
 
     addCardToPlayer();
-
+    qDebug() << "ass";
+    for (auto& p : playerCards_) {
+        qDebug() << p.first;
+    }
     showCardsInHand();
 }
 
@@ -63,6 +66,7 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
 void MainWindow::addCardToPlayer()
 {
     // Adds 3 cards to each player
+    QString playerName = "Niilo";
     for (auto player : game_->players()) {
 
         for (int i = 0; i < 3; i++) {
@@ -72,8 +76,9 @@ void MainWindow::addCardToPlayer()
 //            punainen_pallero->setPlacement();
             punainen_pallero->setButton(assigned_button);
             player->addCard(punainen_pallero);
-
+            playerCards_[playerName].push_back(assigned_button);
         }
+        QString playerName = "Eero";
     }
 }
 
@@ -82,12 +87,16 @@ void MainWindow::showCardsInHand()
     int i = 0;
 
     for (auto card : currentPlayer_->cards()) {
-        QPushButton* assigned_button = new QPushButton(QString::fromStdString(std::to_string(i + 1)));
-        scene_hand->addWidget(assigned_button); // ufoerror
+
+        QString currentPlayerName = game_->currentPlayer()->name();
+        qDebug() << currentPlayerName << "test";
+        QPushButton* assigned_button = playerCards_.at(currentPlayerName).at(i);
+        scene_hand->addWidget(assigned_button);
         assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
 
         connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);
         i++;
+
     }
 
     //    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
@@ -116,6 +125,10 @@ void MainWindow::moveAction()
         ++i;
     }
 
+}
+
+void setNewLocation() {
+    // idea: omat skenet kullekin pelaajalle joista kerrallaan vaan yks ei lukittu?
 }
 
 void MainWindow::initializeLocations()

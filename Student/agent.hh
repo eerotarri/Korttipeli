@@ -30,9 +30,9 @@ public:
     virtual void modifyConnections(short change);
 
 private:
-    // resursseihin paintilla väännetyt tikku-ukot kuvaamaan agentteja?
+    // resursseihin paintilla v��nnetyt tikku-ukot kuvaamaan agentteja?
     // olemassa konstruktori napille johon embedataan kuva
-    // taustalle voi tiesti tulla väriä
+    // taustalle voi tiesti tulla v�ri�
     const QColor color_ = Qt::red;
 
     QString name_;

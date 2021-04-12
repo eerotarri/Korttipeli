@@ -12,6 +12,7 @@
 #include "cardinterface.h"
 #include "simplecarditem.hh"
 #include "game.h"
+#include "map"
 
 namespace Ui {
 class MainWindow;
@@ -31,10 +32,10 @@ public:
     void showCardsInHand();
     void clearScene(QGraphicsScene* scene);
 
-
 public slots:
     void agentClicked();
     void moveAction();
+    //void Ass();
 
 private:
     Ui::MainWindow *ui;
@@ -42,6 +43,8 @@ private:
     std::shared_ptr<Interface::Game> game_;
 
     std::shared_ptr<Interface::Player> currentPlayer_;
+
+    std::map<QString, std::vector<QPushButton*>> playerCards_;
 
     QGraphicsScene* scene_1;
     QGraphicsScene* scene_2;
