@@ -27,8 +27,9 @@ public:
 
     void setCardDimensions(int width, int height, int padding_x, int padding_y);
 
-    void addCardToPlayer(std::shared_ptr<Interface::Player>);
+    void addCardToPlayer();
     void showCardsInHand();
+    void clearScene(QGraphicsScene* scene);
 
 
 public slots:

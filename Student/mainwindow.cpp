@@ -19,6 +19,9 @@ static int CARD_HEIGHT = 100;
 static int PADDING_Y = 20;
 static int PADDING_X = 7;
 
+const int ACTION_WIDTH = 239;
+const int ACTION_HEIGHT = 50;
+
 const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -39,7 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
     addPlayers();
     currentPlayer_ = game_->currentPlayer();
 
-    addCardToPlayer(game_->players().at(0));
+    addCardToPlayer();
+
     showCardsInHand();
 }
 
@@ -56,15 +60,16 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
     PADDING_Y = padding_y;
 }
 
-void MainWindow::addCardToPlayer(std::shared_ptr<Interface::Player>)
+void MainWindow::addCardToPlayer()
 {
     // Adds 3 cards to each player
     for (auto player : game_->players()) {
 
         for (int i = 0; i < 3; i++) {
-            QPushButton* assigned_button = new QPushButton();
+            QPushButton* assigned_button = new QPushButton(QString::fromStdString(std::to_string(i + 1)));
 
             std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>();
+//            punainen_pallero->setPlacement();
             punainen_pallero->setButton(assigned_button);
             player->addCard(punainen_pallero);
 
@@ -77,7 +82,7 @@ void MainWindow::showCardsInHand()
     int i = 0;
 
     for (auto card : currentPlayer_->cards()) {
-        QPushButton* assigned_button; // tähän jäätiin. pitäs väsätä vastaava tietorakenne jolle pystyy kutsua agentin metodeita joista saa nappeja
+        QPushButton* assigned_button = new QPushButton(QString::fromStdString(std::to_string(i + 1)));
         scene_hand->addWidget(assigned_button); // ufoerror
         assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
 
@@ -90,7 +95,8 @@ void MainWindow::showCardsInHand()
 
 void MainWindow::agentClicked()
 {
-    qDebug() << "klikattu";
+    clearScene(scene_actions);
+
     QPushButton* liiku = new QPushButton("Move to");
     scene_actions->addWidget(liiku);
     liiku->setGeometry(0, 0, 239, 50);
@@ -100,19 +106,32 @@ void MainWindow::agentClicked()
 
 void MainWindow::moveAction()
 {
+    clearScene(scene_actions);
 
+    int i = 0;
+    for (auto location : LOCATIONS) {
+        QPushButton* action = new QPushButton(location);
+        scene_actions->addWidget(action);
+        action->setGeometry(0, ACTION_HEIGHT * i, ACTION_WIDTH, ACTION_HEIGHT);
+        ++i;
+    }
 
-    QPushButton* action = new QPushButton("huora");
-    scene_actions->addWidget(action);
-    action->setGeometry(0, 50, 239, 50);
 }
 
 void MainWindow::initializeLocations()
 {
+    // Creates instance "hand" as location
+    std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(0, "Hand");
+    game_->addLocation(new_location);
+
     // Initializes locations to the game
-    for (unsigned short int i = 0; i < 4; i++) {
+    for (unsigned short int i = 1; i < 5; i++) {
         std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i, LOCATIONS.at(i));
         game_->addLocation(new_location);
+    }
+
+    for (auto location : game_->locations()) {
+        qDebug() << location->name();
     }
 }
 
@@ -141,4 +160,17 @@ void MainWindow::addPlayers()
 {
     game_->addPlayer(QString::fromStdString("Niilo"));
     game_->addPlayer(QString::fromStdString("Eero"));
+}
+
+void MainWindow::clearScene(QGraphicsScene* scene)
+{
+  QList<QGraphicsItem*> itemsList = scene->items();
+  QList<QGraphicsItem*>::iterator iter = itemsList.begin();
+  QList<QGraphicsItem*>::iterator end = itemsList.end();
+  while(iter != end)
+    {
+      QGraphicsItem* item = (*iter);
+      item->hide();
+      iter++;
+    }
 }
