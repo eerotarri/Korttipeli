@@ -50,7 +50,7 @@ private:
 
     std::map<QString, std::vector<QPushButton*>> playerCards_;
 
-    Agent* activeAgent_;
+    std::shared_ptr<Agent> activeAgent_;
 
     QGraphicsScene* scene_1;
     QGraphicsScene* scene_2;
@@ -61,6 +61,8 @@ private:
 
     void initializeLocations();
     void setupUserInterface();
+    void updateScenes();
+    void updateHand();
 };
 
 #endif // MAINWINDOW_HH
