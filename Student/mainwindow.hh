@@ -38,6 +38,7 @@ public slots:
     void agentClicked();
     void moveAction();
     void actionClicked();
+    void nextPlayer();
     //void Ass();
 
 private:
@@ -60,7 +61,6 @@ private:
 
     void initializeLocations();
     void setupUserInterface();
-    void addPlayers();
 };
 
 #endif // MAINWINDOW_HH

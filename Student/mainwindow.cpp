@@ -31,11 +31,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUserInterface();
 
-    ConfigurationWindow c;
-    c.exec();
-
     // Initializes the static state of the game
     game_ = std::make_shared<Interface::Game>();
+
+    ConfigurationWindow c(this, game_);
+    c.exec();
+
+    connect(ui->nextButton, &QAbstractButton::clicked, this, &MainWindow::nextPlayer);
 
     // Initialize locations
     initializeLocations();
@@ -43,14 +45,19 @@ MainWindow::MainWindow(QWidget *parent) :
     // Initializes the static runner
     Interface::Runner r(game_);
 
-    addPlayers();
+//    addPlayers();
     currentPlayer_ = game_->currentPlayer();
 
     addCardToPlayer();
-    qDebug() << "ass";
-    for (auto& p : playerCards_) {
-        qDebug() << p.first;
+
+
+    for (auto player : game_->players()) {
+        qDebug() << player->name();
     }
+    qDebug() << game_->players().size();
+//    for (auto& p : playerCards_) {
+//        qDebug() << p.first;
+//    }
     showCardsInHand();
 }
 
@@ -69,10 +76,7 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
 
 void MainWindow::addCardToPlayer()
 {
-    // Adds 3 cards to each player
-    QString playerName = "Niilo";
     for (auto player : game_->players()) {
-
         for (int i = 0; i < 3; i++) {
             QString name = player->name() + QString::fromStdString("\n" + std::to_string(i + 1));
             QPushButton* assigned_button = new QPushButton(name);
@@ -80,20 +84,21 @@ void MainWindow::addCardToPlayer()
             std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0, player, game_->locations().at(0), 0, name);
 
             player->addCard(punainen_pallero);
-            playerCards_[playerName].push_back(assigned_button);
+            playerCards_[player->name()].push_back(assigned_button);
         }
-        QString playerName = "Eero";
     }
 }
 
 void MainWindow::showCardsInHand()
 {
+    clearScene(scene_hand);
+
     int i = 0;
 
     for (auto card : currentPlayer_->cards()) {
 
         QString currentPlayerName = game_->currentPlayer()->name();
-        qDebug() << currentPlayerName << "test";
+//        qDebug() << currentPlayerName << "test";
         QPushButton* assigned_button = playerCards_.at(currentPlayerName).at(i);
         scene_hand->addWidget(assigned_button);
         assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, PADDING_Y, CARD_WIDTH, CARD_HEIGHT);
@@ -103,7 +108,9 @@ void MainWindow::showCardsInHand()
 
     }
 
-    //    connect(punanen, &QPushButton::clicked, this, &MainWindow::toimii);
+    for (auto button : playerCards_.at(currentPlayer_->name())) {
+        button->show();
+    }
 }
 
 void MainWindow::agentClicked()
@@ -120,12 +127,9 @@ void MainWindow::agentClicked()
         }
     }
 
-
     if (Agent* agent = dynamic_cast<Agent*>(vittu.get()))  {
          activeAgent_ = agent;
     }
-
-    qDebug() << button->text();
 
     QPushButton* liiku = new QPushButton("Move to");
     scene_actions->addWidget(liiku);
@@ -177,6 +181,16 @@ void MainWindow::actionClicked()
 
 }
 
+void MainWindow::nextPlayer()
+{
+    game_->nextPlayer();
+    currentPlayer_ = game_->currentPlayer();
+
+    qDebug() << currentPlayer_->name();
+
+    showCardsInHand();
+}
+
 void setNewLocation() {
     // idea: omat skenet kullekin pelaajalle joista kerrallaan vaan yks ei lukittu?
 }
@@ -191,10 +205,6 @@ void MainWindow::initializeLocations()
     for (unsigned short int i = 0; i < 4; i++) {
         std::shared_ptr<Interface::Location> new_location = std::make_shared<Interface::Location>(i + 1, LOCATIONS.at(i));
         game_->addLocation(new_location);
-    }
-
-    for (auto location : game_->locations()) {
-        qDebug() << location->name() << location->id();
     }
 }
 
@@ -217,12 +227,6 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_actions->setAlignment(Qt::AlignTop);
 
     ui->graphicsView_hand->setScene(scene_hand);
-}
-
-void MainWindow::addPlayers()
-{
-    game_->addPlayer(QString::fromStdString("Niilo"));
-    game_->addPlayer(QString::fromStdString("Eero"));
 }
 
 void MainWindow::clearScene(QGraphicsScene* scene)

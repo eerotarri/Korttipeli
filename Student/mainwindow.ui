@@ -152,6 +152,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="nextButton">
+    <property name="geometry">
+     <rect>
+      <x>870</x>
+      <y>520</y>
+      <width>84</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Next</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
