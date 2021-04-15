@@ -5,9 +5,10 @@
 
 #include <QDebug>
 
-ConfigurationWindow::ConfigurationWindow(QWidget *parent) :
+ConfigurationWindow::ConfigurationWindow(QWidget *parent, std::shared_ptr<Interface::Game> game) :
     QDialog(parent),
-    ui(new Ui::ConfigurationWindow)
+    ui(new Ui::ConfigurationWindow),
+    g_(game)
 {
     ui->setupUi(this);
 
@@ -17,6 +18,7 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent) :
 
     connect(ui->playerAmountSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConfigurationWindow::amountOfPlayersChanged);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ConfigurationWindow::okPressed);
+//    connect(ui->buttonBox, &QDialogButtonBox::accepted, parent, &MainWindow::getPlayersFromConf);
 
 
 }
@@ -55,9 +57,23 @@ void ConfigurationWindow::amountOfPlayersChanged(int)
 
 void ConfigurationWindow::okPressed()
 {
+    QString player1 = ui->player1NameInput->text();
+    g_->addPlayer(player1);
 
-//    std::shared_ptr<Interface::Player> player1 = std::make_shared<Interface::Player>(g, 1, ui->player1NameInput->text());
-//    std::shared_ptr<Interface::Player> player2 = std::make_shared<Interface::Player>(g, 2, ui->player2NameInput->text());
-//    g->addPlayer(ui->player1NameInput->text());
-//    g->addPlayer(ui->player2NameInput->text());
+    if (ui->playerAmountSpinBox->value() == 2) {
+        QString player2 = ui->player2NameInput->text();
+        g_->addPlayer(player2);
+    } else if (ui->playerAmountSpinBox->value() == 3) {
+        QString player2 = ui->player2NameInput->text();
+        g_->addPlayer(player2);
+        QString player3 = ui->player3NameInput->text();
+        g_->addPlayer(player3);
+    }  else if (ui->playerAmountSpinBox->value() == 4){
+        QString player2 = ui->player2NameInput->text();
+        g_->addPlayer(player2);
+        QString player3 = ui->player3NameInput->text();
+        g_->addPlayer(player3);
+        QString player4 = ui->player4NameInput->text();
+        g_->addPlayer(player4);
+    }
 }
