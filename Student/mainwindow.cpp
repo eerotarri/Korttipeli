@@ -76,6 +76,7 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
 
 void MainWindow::addCardToPlayer()
 {
+    int j = 0;
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
             QString name = player->name() + QString::fromStdString("\n" + std::to_string(i + 1));
@@ -86,6 +87,10 @@ void MainWindow::addCardToPlayer()
                                                                               0, name);
             punainen_pallero->setScene(scene_hand);
             player->addCard(punainen_pallero);
+            QPalette p = palette();
+            p.setColor(QPalette::Button, colors_.at(j));
+            assigned_button->setPalette(p);
+            j++;
             playerCards_[player->name()].push_back(assigned_button);
         }
     }
@@ -145,12 +150,13 @@ void MainWindow::agentClicked()
     QPushButton* tapa = new QPushButton("Stab competitor");
     scene_actions->addWidget(tapa);
     tapa->setGeometry(0, 100, 239, 50);
-    unsigned int weak_location = game_->locations().at(0)->id();
-    unsigned int vittu_location = vittu->location().lock()->id();
-    if (vittu_location == weak_location){
+//    unsigned int weak_location = game_->locations().at(0)->id();
+//    unsigned int vittu_location = vittu->location().lock()->id();
+    if (activeAgent_->scene() == scene_hand){
         huijaa->setEnabled(false);
         tapa->setEnabled(false);
     } else {
+        //qDebug() << "mene vittu elseen";
         huijaa->setEnabled(true);
         if (activeAgent_->scene()->items().size() >= 2) {
             tapa->setEnabled(true);
