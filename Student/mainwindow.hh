@@ -8,6 +8,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QPushButton>
+#include <QTextBrowser>
 
 #include "cardinterface.h"
 #include "simplecarditem.hh"
@@ -39,8 +40,8 @@ public slots:
     void moveAction();
     void actionClicked();
     void nextPlayer();
-//    void swindleAction();
-//    void killAction();
+    void swindleAction();
+    void killAction();
     //void Ass();
 
 private:

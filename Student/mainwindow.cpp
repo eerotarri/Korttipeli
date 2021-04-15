@@ -119,6 +119,9 @@ void MainWindow::showCardsInHand()
 
 void MainWindow::agentClicked()
 {
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("The points of the current player among with some other status stuff: "
+                               "(a method should print this stuff out whenever the context browser isn't busy");
     clearScene(scene_actions);
 
     auto button = qobject_cast<QPushButton *>(sender());
@@ -158,7 +161,7 @@ void MainWindow::agentClicked()
     } else {
         //qDebug() << "mene vittu elseen";
         huijaa->setEnabled(true);
-        if (activeAgent_->scene()->items().size() >= 2) {
+        if (activeAgent_->scene()->items().size() >= 2 and activeAgent_->scene()) {
             tapa->setEnabled(true);
         } else {
             tapa->setEnabled(false);
@@ -167,13 +170,15 @@ void MainWindow::agentClicked()
     }
 
     connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
-//    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
-//    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
+    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
+    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
 }
 
 void MainWindow::moveAction()
 {
     clearScene(scene_actions);
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("Move command context here TBA");
 
 
     int i = 0;
@@ -188,15 +193,20 @@ void MainWindow::moveAction()
 
 }
 
-//void swindleAction()
-//{
+void MainWindow::swindleAction()
+{
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("The swindle command adds good rep to an agent and in turn to its player as well. The chance of"
+                               "this dice roll succeeding is decent.");
+}
 
-//}
-
-//void killAction()
-//{
-
-//}
+void MainWindow::killAction()
+{
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("By killing an adjacent agent the agent (and in turn its player) will gain all its rep. The chance"
+                               " of this dice roll being succesful is low. A dead agent returns to its deck and"
+                               " can be used again after a cooldown.");
+}
 
 void MainWindow::actionClicked()
 {
@@ -251,6 +261,9 @@ void MainWindow::nextPlayer()
     }
 
     qDebug() << currentPlayer_->name();
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("The points of the current player among with some other status stuff:"
+                               " (a method should print this stuff out whenever the context browser isn't busy");
 
     showCardsInHand();
     clearScene(scene_actions);
@@ -283,6 +296,7 @@ void MainWindow::setupUserInterface()
     scene_4 = new QGraphicsScene(ui->graphicsView_4);
     scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
+
 
     ui->graphicsView->setScene(scene_1);
     ui->graphicsView->setAlignment(Qt::AlignLeft);
