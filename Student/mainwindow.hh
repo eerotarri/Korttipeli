@@ -8,6 +8,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QPushButton>
+#include <QTextBrowser>
 
 #include "cardinterface.h"
 #include "simplecarditem.hh"
@@ -39,8 +40,8 @@ public slots:
     void moveAction();
     void actionClicked();
     void nextPlayer();
-//    void swindleAction();
-//    void killAction();
+    void swindleAction();
+    void killAction();
     //void Ass();
 
 private:
@@ -62,6 +63,11 @@ private:
     QGraphicsScene* scene_hand;
 
     int turn_ = 1;
+
+    std::vector<QColor> colors_ = {QColor(255,0,118), QColor(225,0,0), QColor(203,80,80), QColor(80,196,203), QColor(12,83,88),
+                                  QColor(27,88,12), QColor(223,151,78), QColor(78,112,223), QColor(151,78,223), QColor(187,235,124),
+                                  QColor(255,200,30), QColor(154,255,0)};
+
 
     void initializeLocations();
     void setupUserInterface();

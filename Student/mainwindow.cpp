@@ -67,6 +67,7 @@ void MainWindow::setCardDimensions(int width, int height, int padding_x, int pad
 
 void MainWindow::addCardToPlayer()
 {
+    int j = 0;
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
             QString name = player->name() + QString::fromStdString("\n" + std::to_string(i + 1));
@@ -77,6 +78,10 @@ void MainWindow::addCardToPlayer()
                                                                               0, name);
             punainen_pallero->setScene(scene_hand);
             player->addCard(punainen_pallero);
+            QPalette p = palette();
+            p.setColor(QPalette::Button, colors_.at(j));
+            assigned_button->setPalette(p);
+            j++;
             playerCards_[player->name()].push_back(assigned_button);
         }
     }
@@ -114,6 +119,9 @@ void MainWindow::showCardsInHand()
 
 void MainWindow::agentClicked()
 {
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("The points of the current player among with some other status stuff: "
+                               "(a method should print this stuff out whenever the context browser isn't busy");
     clearScene(scene_actions);
 
     auto button = qobject_cast<QPushButton *>(sender());
@@ -145,14 +153,15 @@ void MainWindow::agentClicked()
     QPushButton* tapa = new QPushButton("Stab competitor");
     scene_actions->addWidget(tapa);
     tapa->setGeometry(0, 100, 239, 50);
-    unsigned int weak_location = game_->locations().at(0)->id();
-    unsigned int vittu_location = vittu->location().lock()->id();
-    if (vittu_location == weak_location){
+//    unsigned int weak_location = game_->locations().at(0)->id();
+//    unsigned int vittu_location = vittu->location().lock()->id();
+    if (activeAgent_->scene() == scene_hand){
         huijaa->setEnabled(false);
         tapa->setEnabled(false);
     } else {
+        //qDebug() << "mene vittu elseen";
         huijaa->setEnabled(true);
-        if (activeAgent_->scene()->items().size() >= 2) {
+        if (activeAgent_->scene()->items().size() >= 2 and activeAgent_->scene()) {
             tapa->setEnabled(true);
         } else {
             tapa->setEnabled(false);
@@ -161,13 +170,15 @@ void MainWindow::agentClicked()
     }
 
     connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
-//    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
-//    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
+    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
+    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
 }
 
 void MainWindow::moveAction()
 {
     clearScene(scene_actions);
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("Move command context here TBA");
 
 
     int i = 0;
@@ -182,15 +193,20 @@ void MainWindow::moveAction()
 
 }
 
-//void swindleAction()
-//{
+void MainWindow::swindleAction()
+{
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("The swindle command adds good rep to an agent and in turn to its player as well. The chance of"
+                               "this dice roll succeeding is decent.");
+}
 
-//}
-
-//void killAction()
-//{
-
-//}
+void MainWindow::killAction()
+{
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("By killing an adjacent agent the agent (and in turn its player) will gain all its rep. The chance"
+                               " of this dice roll being succesful is low. A dead agent returns to its deck and"
+                               " can be used again after a cooldown.");
+}
 
 void MainWindow::actionClicked()
 {
@@ -244,6 +260,10 @@ void MainWindow::nextPlayer()
         button->setEnabled(true);
     }
 
+    ui->textBrowser_2->clear();
+    ui->textBrowser_2->setText("The points of the current player among with some other status stuff:"
+                               " (a method should print this stuff out whenever the context browser isn't busy");
+
     showCardsInHand();
     clearScene(scene_actions);
 
@@ -278,14 +298,15 @@ void MainWindow::setupUserInterface()
     scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
+
     ui->graphicsView->setScene(scene_1);
-    ui->graphicsView->setAlignment(Qt::AlignLeft);
+    ui->graphicsView->setAlignment(Qt::AlignCenter);
     ui->graphicsView_2->setScene(scene_2);
-    ui->graphicsView_2->setAlignment(Qt::AlignLeft);
+    ui->graphicsView_2->setAlignment(Qt::AlignCenter);
     ui->graphicsView_3->setScene(scene_3);
-    ui->graphicsView_3->setAlignment(Qt::AlignLeft);
+    ui->graphicsView_3->setAlignment(Qt::AlignCenter);
     ui->graphicsView_4->setScene(scene_4);
-    ui->graphicsView_4->setAlignment(Qt::AlignLeft);
+    ui->graphicsView_4->setAlignment(Qt::AlignCenter);
     ui->graphicsView_actions->setScene(scene_actions);
     ui->graphicsView_actions->setAlignment(Qt::AlignTop);
 
@@ -302,6 +323,7 @@ void MainWindow::updateScenes()
             ++i;
         }
     }
+
     for (auto item : scene_2->items(Qt::AscendingOrder)) {
         qDebug() << item->pos();
     }
