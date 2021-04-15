@@ -61,6 +61,8 @@ private:
     QGraphicsScene* scene_actions;
     QGraphicsScene* scene_hand;
 
+    int turn_ = 1;
+
     void initializeLocations();
     void setupUserInterface();
     void updateScenes();

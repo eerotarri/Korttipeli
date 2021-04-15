@@ -49,15 +49,6 @@ MainWindow::MainWindow(QWidget *parent) :
     currentPlayer_ = game_->currentPlayer();
 
     addCardToPlayer();
-
-
-    for (auto player : game_->players()) {
-        qDebug() << player->name();
-    }
-    qDebug() << game_->players().size();
-//    for (auto& p : playerCards_) {
-//        qDebug() << p.first;
-//    }
     showCardsInHand();
 }
 
@@ -95,21 +86,30 @@ void MainWindow::showCardsInHand()
 {
     clearScene(scene_hand);
 
-    int i = 0;
+    size_t turn = turn_;
+    if (turn < game_->players().size()){
+        int i = 0;
+        for (auto card : game_->currentPlayer()->cards()) {
+
+            QPushButton* assigned_button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+
+            assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+            scene_hand->addWidget(assigned_button);
+            connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);
+            i++;
+        }
+    }
+
+
 
     for (auto card : game_->currentPlayer()->cards()) {
-
-        QPushButton* assigned_button = std::dynamic_pointer_cast<Agent>(card)->getButton();
-
-        assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
-        scene_hand->addWidget(assigned_button);
-        connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);
-        i++;
-    }
-
-    for (auto button : playerCards_.at(currentPlayer_->name())) {
+        auto agent = std::dynamic_pointer_cast<Agent>(card);
+        auto button = agent->getButton();
         button->setVisible(true);
+
     }
+
+
 }
 
 void MainWindow::agentClicked()
@@ -198,7 +198,6 @@ void MainWindow::actionClicked()
 
 //    activeAgent_->getButton()->hide();
     QGraphicsProxyWidget* proxy = activeAgent_->getButton()->graphicsProxyWidget();
-    qDebug() << proxy->geometry();
 
     if (button->text() == "Castle") {
         if (scene_1->items().size() < 3) {
@@ -222,7 +221,6 @@ void MainWindow::actionClicked()
         }
     }
     updateScenes();
-    qDebug() << "Castle items: " << scene_1->items().size();
 
 
 
@@ -231,6 +229,7 @@ void MainWindow::actionClicked()
 
 void MainWindow::nextPlayer()
 {
+    // Disables "previous players" buttons
     for (auto card : game_->currentPlayer()->cards()) {
         auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
         button->setEnabled(false);
@@ -239,15 +238,16 @@ void MainWindow::nextPlayer()
     game_->nextPlayer();
     currentPlayer_ = game_->currentPlayer();
 
+    // Enables next players buttons
     for (auto card : game_->currentPlayer()->cards()) {
         auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
         button->setEnabled(true);
     }
 
-    qDebug() << currentPlayer_->name();
-
     showCardsInHand();
     clearScene(scene_actions);
+
+    turn_++;
 }
 
 void setNewLocation() {
@@ -294,18 +294,16 @@ void MainWindow::setupUserInterface()
 
 void MainWindow::updateScenes()
 {
-
-    qDebug() << scene_4->items(Qt::AscendingOrder);
-
-
     std::vector<QGraphicsScene*> scenes = {scene_1, scene_2, scene_3, scene_4};
     for (QGraphicsScene* scene : scenes){
         int i = 0;
         for (auto item : scene->items(Qt::AscendingOrder)) {
-            auto real_item = dynamic_cast<QGraphicsWidget*>(item);
-            real_item->setGeometry((CARD_WIDTH) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+            item->setPos((CARD_WIDTH + PADDING_X) * i, 20);
             ++i;
         }
+    }
+    for (auto item : scene_2->items(Qt::AscendingOrder)) {
+        qDebug() << item->pos();
     }
 }
 
@@ -328,13 +326,7 @@ void MainWindow::updateHand()
 
 void MainWindow::clearScene(QGraphicsScene* scene)
 {
-  QList<QGraphicsItem*> itemsList = scene->items();
-  QList<QGraphicsItem*>::iterator iter = itemsList.begin();
-  QList<QGraphicsItem*>::iterator end = itemsList.end();
-  while(iter != end)
-    {
-      QGraphicsItem* item = (*iter);
+  for (auto item : scene->items()) {
       item->setVisible(false);
-      iter++;
-    }
+  }
 }
