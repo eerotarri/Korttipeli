@@ -97,23 +97,16 @@ void MainWindow::showCardsInHand()
 
     for (auto card : game_->currentPlayer()->cards()) {
 
-        QString currentPlayerName = game_->currentPlayer()->name();
-
-//        Teen läpäl playerCardsista obsoletee :D
-//        QPushButton* assigned_button = playerCards_.at(currentPlayerName).at(i);
-//        std::shared_ptr<Agent> agent = std::dynamic_pointer_cast<Agent>(card);
         QPushButton* assigned_button = std::dynamic_pointer_cast<Agent>(card)->getButton();
 
-        scene_hand->addWidget(assigned_button);
         assigned_button->setGeometry((CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
-
+        scene_hand->addWidget(assigned_button);
         connect(assigned_button, &QPushButton::clicked, this, &MainWindow::agentClicked);
         i++;
-
     }
 
     for (auto button : playerCards_.at(currentPlayer_->name())) {
-        button->show();
+        button->setVisible(true);
     }
 }
 
@@ -125,7 +118,7 @@ void MainWindow::agentClicked()
 
     std::shared_ptr<Interface::CardInterface> vittu;
 
-    for (auto agent : currentPlayer_->cards()) {
+    for (auto agent : game_->currentPlayer()->cards()) {
         if (agent->name() == button->text()) {
             vittu = agent;
         }
@@ -198,13 +191,23 @@ void MainWindow::actionClicked()
 
 void MainWindow::nextPlayer()
 {
+    for (auto card : game_->currentPlayer()->cards()) {
+        auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+        button->setEnabled(false);
+    }
+
     game_->nextPlayer();
     currentPlayer_ = game_->currentPlayer();
+
+    for (auto card : game_->currentPlayer()->cards()) {
+        auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+        button->setEnabled(true);
+    }
 
     qDebug() << currentPlayer_->name();
 
     showCardsInHand();
-//    updateHand();
+    clearScene(scene_actions);
 }
 
 void setNewLocation() {
@@ -251,14 +254,14 @@ void MainWindow::setupUserInterface()
 
 void MainWindow::updateScenes()
 {
-    qDebug() << "wtf";
+    qDebug() << scene_4->items(Qt::AscendingOrder);
 
     std::vector<QGraphicsScene*> scenes = {scene_1, scene_2, scene_3, scene_4};
     for (QGraphicsScene* scene : scenes){
         int i = 0;
-        for (auto item : scene->items()) {
+        for (auto item : scene->items(Qt::AscendingOrder)) {
             auto real_item = dynamic_cast<QGraphicsWidget*>(item);
-            real_item->setGeometry((CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+            real_item->setGeometry((CARD_WIDTH) * i, 0, CARD_WIDTH, CARD_HEIGHT);
             ++i;
         }
     }
@@ -268,10 +271,14 @@ void MainWindow::updateScenes()
 void MainWindow::updateHand()
 {
     clearScene(scene_hand);
-
+    int i = 0;
     for (auto card : game_->currentPlayer()->cards()) {
         auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+        button->setGeometry((CARD_WIDTH) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+        button->move((CARD_WIDTH) * i, 0);
         scene_hand->addWidget(button);
+        connect(button, &QPushButton::clicked, this, &MainWindow::agentClicked);
+        ++i;
     }
 }
 
@@ -283,7 +290,7 @@ void MainWindow::clearScene(QGraphicsScene* scene)
   while(iter != end)
     {
       QGraphicsItem* item = (*iter);
-      item->hide();
+      item->setVisible(false);
       iter++;
     }
 }
