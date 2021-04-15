@@ -4,6 +4,7 @@
 #include "agentinterface.h"
 #include "QPushButton"
 #include "location.h"
+#include "QGraphicsScene"
 
 
 class Agent: public Interface::AgentInterface
@@ -11,7 +12,8 @@ class Agent: public Interface::AgentInterface
 public:
     explicit Agent(QPushButton* button = nullptr, int x_in_scene = 0, int y_in_scene = 0,
                    std::weak_ptr<Interface::Player> ownr = {}, std::weak_ptr<Interface::Location> lctn = {},
-                   unsigned short pts = 0);
+                   unsigned short pts = 0, QString name = "", QString title = "", QString typeName = "",
+                   QGraphicsScene* scn = NULL);
     virtual ~Agent();
 
     virtual QString name() const;
@@ -28,6 +30,10 @@ public:
     virtual unsigned short connections() const;
     virtual void setConnections(unsigned short connections);
     virtual void modifyConnections(short change);
+    virtual QGraphicsScene* scene();
+    virtual void setScene(QGraphicsScene* scn);
+
+
 
 private:
     // resursseihin paintilla v��nnetyt tikku-ukot kuvaamaan agentteja?
@@ -54,6 +60,9 @@ private:
     int y_;
 
     QPushButton* button_;
+
+    QGraphicsScene* scene_;
+
 };
 
 #endif // AGENT_HH

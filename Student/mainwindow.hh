@@ -39,6 +39,8 @@ public slots:
     void moveAction();
     void actionClicked();
     void nextPlayer();
+//    void swindleAction();
+//    void killAction();
     //void Ass();
 
 private:

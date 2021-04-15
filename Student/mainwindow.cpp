@@ -81,8 +81,10 @@ void MainWindow::addCardToPlayer()
             QString name = player->name() + QString::fromStdString("\n" + std::to_string(i + 1));
             QPushButton* assigned_button = new QPushButton(name);
 
-            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0, player, game_->locations().at(0), 0, name);
-
+            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0,
+                                                                              player, game_->locations().at(0),
+                                                                              0, name);
+            punainen_pallero->setScene(scene_hand);
             player->addCard(punainen_pallero);
             playerCards_[player->name()].push_back(assigned_button);
         }
@@ -99,7 +101,9 @@ void MainWindow::showCardsInHand()
 
         QString currentPlayerName = game_->currentPlayer()->name();
 
+
 //        Teen l�p�l playerCardsista obsoletee :D
+
 //        QPushButton* assigned_button = playerCards_.at(currentPlayerName).at(i);
 //        std::shared_ptr<Agent> agent = std::dynamic_pointer_cast<Agent>(card);
         QPushButton* assigned_button = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -131,19 +135,43 @@ void MainWindow::agentClicked()
         }
     }
 
-    // JOS LUET T�T� NI DYNAMIC_POINTER_CAST ON AIKA JUMALA KORTTI
-    // SILL� SAA MUUTETTUA CARDINTERFACE TYYPPISEN KUSIP��N AGENTIKS
-    // OLETAN ETT� TOIMII VAAN KUN SE OIKEESTI ALUNPERIN OLIKI AGENTTI
-    // MUTTA EIH�N ME MUUTA TARVITAKKAA :D
-    // LIS�HUOMIONA ETT� DYNAMIC_POINTER_CAST TOIMII SMAST POINTTEREILLA
-    // KUN PELKK� DYNAMIC_CAST TOIMII NORMI POINTTEREILLA
+
+    // JOS LUET TÄTÄ NI DYNAMIC_POINTER_CAST ON AIKA JUMALA KORTTI
+    // SILLÄ SAA MUUTETTUA CARDINTERFACE TYYPPISEN KUSIPÄÄN AGENTIKS
+    // OLETAN ETTÄ TOIMII VAAN KUN SE OIKEESTI ALUNPERIN OLIKI AGENTTI
+    // MUTTA EIHÄN ME MUUTA TARVITAKKAA :D
+    // LISÄHUOMIONA ETTÄ DYNAMIC_POINTER_CAST TOIMII SMAST POINTTEREILLA
+    // KUN PELKKÄ DYNAMIC_CAST TOIMII NORMI POINTTEREILLA
+
     activeAgent_ = std::dynamic_pointer_cast<Agent>(vittu);
 
     QPushButton* liiku = new QPushButton("Move to");
     scene_actions->addWidget(liiku);
     liiku->setGeometry(0, 0, 239, 50);
+    QPushButton* huijaa = new QPushButton("Swindle");
+    scene_actions->addWidget(huijaa);
+    huijaa->setGeometry(0, 50, 239, 50);
+    QPushButton* tapa = new QPushButton("Stab competitor");
+    scene_actions->addWidget(tapa);
+    tapa->setGeometry(0, 100, 239, 50);
+    unsigned int weak_location = game_->locations().at(0)->id();
+    unsigned int vittu_location = vittu->location().lock()->id();
+    if (vittu_location == weak_location){
+        huijaa->setEnabled(false);
+        tapa->setEnabled(false);
+    } else {
+        huijaa->setEnabled(true);
+        if (activeAgent_->scene()->items().size() >= 2) {
+            tapa->setEnabled(true);
+        } else {
+            tapa->setEnabled(false);
+        }
+
+    }
 
     connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
+//    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
+//    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
 }
 
 void MainWindow::moveAction()
@@ -163,6 +191,16 @@ void MainWindow::moveAction()
 
 }
 
+//void swindleAction()
+//{
+
+//}
+
+//void killAction()
+//{
+
+//}
+
 void MainWindow::actionClicked()
 {
     auto button = qobject_cast<QPushButton *>(sender());
@@ -174,18 +212,22 @@ void MainWindow::actionClicked()
     if (button->text() == "Castle") {
         if (scene_1->items().size() < 3) {
             scene_1->addItem(proxy);
+            activeAgent_->setScene(scene_1);
         }
     } else if (button->text() == "Marketplace") {
         if (scene_2->items().size() < 3) {
             scene_2->addItem(proxy);
+            activeAgent_->setScene(scene_2);
         }
     } else if (button->text() == "Forest") {
         if (scene_3->items().size() < 3) {
             scene_3->addItem(proxy);
+            activeAgent_->setScene(scene_3);
         }
     } else if (button->text() == "Slums") {
         if (scene_4->items().size() < 3) {
             scene_4->addItem(proxy);
+            activeAgent_->setScene(scene_4);
         }
     }
     updateScenes();
@@ -251,7 +293,7 @@ void MainWindow::setupUserInterface()
 
 void MainWindow::updateScenes()
 {
-    qDebug() << "wtf";
+    qDebug() << "wtf joo jep";
 
     std::vector<QGraphicsScene*> scenes = {scene_1, scene_2, scene_3, scene_4};
     for (QGraphicsScene* scene : scenes){
@@ -264,7 +306,9 @@ void MainWindow::updateScenes()
     }
 }
 
-// EI TOIMI VIEL� :D
+
+// EI TOIMI VIELÄ :D
+
 void MainWindow::updateHand()
 {
     clearScene(scene_hand);
