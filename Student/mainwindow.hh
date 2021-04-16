@@ -13,6 +13,7 @@
 #include "cardinterface.h"
 #include "simplecarditem.hh"
 #include "game.h"
+#include "runner.h"
 #include "map"
 
 namespace Ui {
@@ -33,6 +34,16 @@ public:
     void showCardsInHand();
     void clearScene(QGraphicsScene* scene);
 
+    static const int CARD_WIDTH = 80;
+    static const int CARD_HEIGHT = 100;
+    static const int PADDING_Y = 20;
+    static const int PADDING_X = 7;
+
+    static const int ACTION_WIDTH = 239;
+    static const int ACTION_HEIGHT = 50;
+
+    const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
+
 public slots:
     void agentClicked();
     void moveAction();
@@ -40,12 +51,12 @@ public slots:
     void nextPlayer();
     void swindleAction();
     void killAction();
-    //void Ass();
 
 private:
     Ui::MainWindow *ui;
 
     std::shared_ptr<Interface::Game> game_;
+    std::shared_ptr<Interface::Runner> runner_;
 
     std::shared_ptr<Interface::Player> currentPlayer_;
 
@@ -72,6 +83,7 @@ private:
     void updateScenes();
     void updateHand();
     void waitForReady();
+    void perform();
 };
 
 #endif // MAINWINDOW_HH

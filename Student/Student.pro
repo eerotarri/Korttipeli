@@ -9,7 +9,8 @@ SOURCES += \
     agent.cpp \
     configurationwindow.cpp \
     main.cc \
-    mainwindow.cpp
+    mainwindow.cpp \
+    moveagentaction.cpp
 
 win32:CONFIG(release, debug|release): LIBS += \
     -L$$OUT_PWD/../course/Course/release/ -lCourse
@@ -42,4 +43,5 @@ FORMS += \
 HEADERS += \
     agent.hh \
     configurationwindow.hh \
-    mainwindow.hh
+    mainwindow.hh \
+    moveagentaction.hh

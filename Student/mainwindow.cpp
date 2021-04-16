@@ -1,12 +1,12 @@
-﻿#include "mainwindow.hh"
+#include "mainwindow.hh"
 #include "ui_mainwindow.h"
 #include "configurationwindow.hh"
 #include "player.h"
 #include "location.h"
 #include "settingsreader.h"
-#include "runner.h"
 #include "agent.hh"
 #include "manualcontrol.h"
+#include "moveagentaction.hh"
 
 #include <QFile>
 #include <QGraphicsView>
@@ -16,17 +16,7 @@
 
 #include <QDebug>
 
-static int CARD_WIDTH = 80;
-static int CARD_HEIGHT = 100;
-//static int PADDING_Y = 20;
-static int PADDING_X = 7;
-
-const int ACTION_WIDTH = 239;
-const int ACTION_HEIGHT = 50;
-
 const QString READY_TEXT = "Press Ready to pass turn to next player.";
-
-const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -45,11 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     initializeLocations();
 
     // Initialize the static runner and set control objects to players
-    std::shared_ptr<Interface::Runner> runner = std::make_shared<Interface::Runner>(game_);
+    runner_ = std::make_shared<Interface::Runner>(game_);
     for (auto player : game_->players()) {
         std::shared_ptr<Interface::ManualControl> control_object =
                 std::make_shared<Interface::ManualControl>();
-        runner->setPlayerControl(player, control_object);
+        runner_->setPlayerControl(player, control_object);
     }
 
 
@@ -160,9 +150,27 @@ void MainWindow::agentClicked()
 
     }
 
-    connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
-    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
-    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
+    /*
+     * Eli kirjottelen tähän suunnitelman
+     * -> Painetaan nappia 'Move to' (tapahtunut jo)
+     * -> Manual controllin action asetetaan MoveActionAgent tyypiksi
+     * -> runner ajetaan ja se toteaa että jaha tällanen manual control päättää
+     * -> Manual control on että joo olisko toi MoveActionAgent ku attribuutissa lukee niin
+     * -> MoveActionAgent performaa
+     */
+
+    // This sets the next user action as moveAction // mutta nyt kaikki napit moveActioniin
+    // MENNÄÄN SINNE PERFORMIIN MUTTA SE TARKISTAA MITÄ SITTEN TAPAHTUU?
+//    std::shared_ptr<MoveAgentAction> next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+//    std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
+
+    connect(liiku, &QPushButton::clicked, this, &MainWindow::perform);
+    connect(huijaa, &QPushButton::clicked, this, &MainWindow::perform);
+    connect(tapa, &QPushButton::clicked, this, &MainWindow::perform);
+
+//    connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
+//    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
+//    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
 }
 
 void MainWindow::moveAction()
@@ -203,7 +211,6 @@ void MainWindow::actionClicked()
 {
     auto button = qobject_cast<QPushButton *>(sender());
 
-//    activeAgent_->getButton()->hide();
     QGraphicsProxyWidget* proxy = activeAgent_->getButton()->graphicsProxyWidget();
 
     if (button->text() == "Castle") {
@@ -229,6 +236,7 @@ void MainWindow::actionClicked()
     }
     updateScenes();
 
+
     // Notify card played
     for (auto card : game_->currentPlayer()->cards()) {
         auto agent = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -239,7 +247,7 @@ void MainWindow::actionClicked()
 
     emit waitForReady();
 
-    activeAgent_->getButton()->show();
+//    activeAgent_->getButton()->show();
 }
 
 void MainWindow::nextPlayer()
@@ -312,18 +320,19 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_hand->setScene(scene_hand);
 }
 
+// JOSTAIN ****N SYYSTÄ KUN KOITTAA SIIRTÄÄ AGENTTIA LOKAATIOSTA TOISEEN
+// SE DISPLACEE NIIN HEVON****STI
 void MainWindow::updateScenes()
 {
     std::vector<QGraphicsScene*> scenes = {scene_1, scene_2, scene_3, scene_4};
     for (QGraphicsScene* scene : scenes){
         int i = 0;
         for (auto item : scene->items(Qt::AscendingOrder)) {
-            item->setPos((CARD_WIDTH + PADDING_X) * i, 20);
+            item->setPos((CARD_WIDTH + PADDING_X) * i, 0);
             ++i;
         }
     }
 }
-
 
 void MainWindow::updateHand()
 {
@@ -356,6 +365,23 @@ void MainWindow::waitForReady()
 
     ui->textBrowser_2->setText(READY_TEXT);
     connect(readyButton, &QAbstractButton::clicked, this, &MainWindow::nextPlayer);
+}
+
+void MainWindow::perform()
+{
+    auto button = qobject_cast<QPushButton *>(sender());
+    std::shared_ptr<MoveAgentAction> next_action = nullptr;
+
+    if (button->text() == "Move to") {
+        next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+    } else if (button->text() == "Swindle") {
+//        next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+    } else if (button->text() == "Stab") {
+//        next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+    }
+    std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
+
+    runner_->run();
 }
 
 void MainWindow::clearScene(QGraphicsScene* scene)
