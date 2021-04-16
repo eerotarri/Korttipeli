@@ -23,6 +23,8 @@ static int PADDING_X = 7;
 const int ACTION_WIDTH = 239;
 const int ACTION_HEIGHT = 50;
 
+const QString READY_TEXT = "Press Ready to pass turn to next player.";
+
 const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -33,11 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Initializes the static state of the game
     game_ = std::make_shared<Interface::Game>();
+    game_->setActive(true);
 
     ConfigurationWindow c(this, game_);
     c.exec();
-
-    connect(ui->nextButton, &QAbstractButton::clicked, this, &MainWindow::nextPlayer);
 
     // Initialize locations
     initializeLocations();
@@ -70,7 +71,7 @@ void MainWindow::addCardToPlayer()
     int j = 0;
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
-            QString name = player->name() + QString::fromStdString("\n" + std::to_string(i + 1));
+            QString name = player->name() + QString::fromStdString("\nAgent: " + std::to_string(i + 1));
             QPushButton* assigned_button = new QPushButton(name);
 
             std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0,
@@ -146,13 +147,13 @@ void MainWindow::agentClicked()
 
     QPushButton* liiku = new QPushButton("Move to");
     scene_actions->addWidget(liiku);
-    liiku->setGeometry(0, 0, 239, 50);
+    liiku->setGeometry(0, 0, ACTION_WIDTH, ACTION_HEIGHT);
     QPushButton* huijaa = new QPushButton("Swindle");
     scene_actions->addWidget(huijaa);
-    huijaa->setGeometry(0, 50, 239, 50);
+    huijaa->setGeometry(0, 50, ACTION_WIDTH, ACTION_HEIGHT);
     QPushButton* tapa = new QPushButton("Stab competitor");
     scene_actions->addWidget(tapa);
-    tapa->setGeometry(0, 100, 239, 50);
+    tapa->setGeometry(0, 100, ACTION_WIDTH, ACTION_HEIGHT);
 //    unsigned int weak_location = game_->locations().at(0)->id();
 //    unsigned int vittu_location = vittu->location().lock()->id();
     if (activeAgent_->scene() == scene_hand){
@@ -238,7 +239,7 @@ void MainWindow::actionClicked()
     }
     updateScenes();
 
-
+    emit waitForReady();
 
     activeAgent_->getButton()->show();
 }
@@ -290,7 +291,7 @@ void MainWindow::initializeLocations()
 void MainWindow::setupUserInterface()
 {
     ui->setupUi(this);
-    // We need a graphics scene in which to draw rectangles
+    // Creating scenes to store items for example buttons for Agents
     scene_1 = new QGraphicsScene(ui->graphicsView);
     scene_2 = new QGraphicsScene(ui->graphicsView_2);
     scene_3 = new QGraphicsScene(ui->graphicsView_3);
@@ -323,14 +324,8 @@ void MainWindow::updateScenes()
             ++i;
         }
     }
-
-    for (auto item : scene_2->items(Qt::AscendingOrder)) {
-        qDebug() << item->pos();
-    }
 }
 
-
-// EI TOIMI VIELÄ :D
 
 void MainWindow::updateHand()
 {
@@ -344,6 +339,25 @@ void MainWindow::updateHand()
         connect(button, &QPushButton::clicked, this, &MainWindow::agentClicked);
         ++i;
     }
+}
+
+void MainWindow::waitForReady()
+{
+    clearScene(scene_actions);
+    QPushButton* readyButton = new QPushButton("Ready");
+    readyButton->resize(ACTION_WIDTH, ACTION_HEIGHT);
+    scene_actions->addWidget(readyButton);
+
+    // Disables all buttons so Ready is the only thing you can press
+    for (auto player : game_->players()) {
+        for (auto card : player->cards()) {
+            auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+            button->setEnabled(false);
+        }
+    }
+
+    ui->textBrowser_2->setText(READY_TEXT);
+    connect(readyButton, &QAbstractButton::clicked, this, &MainWindow::nextPlayer);
 }
 
 void MainWindow::clearScene(QGraphicsScene* scene)

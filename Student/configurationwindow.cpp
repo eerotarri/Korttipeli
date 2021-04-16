@@ -12,13 +12,18 @@ ConfigurationWindow::ConfigurationWindow(QWidget *parent, std::shared_ptr<Interf
 {
     ui->setupUi(this);
 
-    ui->player2NameInput->setEnabled(false);
     ui->player3NameInput->setEnabled(false);
     ui->player4NameInput->setEnabled(false);
+    ui->playerAmountSpinBox->setValue(2);
+    ui->playerAmountSpinBox->setMinimum(2);
+
+    // Default values for player names
+    ui->player1NameInput->setText("Player 1");
+    ui->player2NameInput->setText("Player 2");
+
 
     connect(ui->playerAmountSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConfigurationWindow::amountOfPlayersChanged);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ConfigurationWindow::okPressed);
-//    connect(ui->buttonBox, &QDialogButtonBox::accepted, parent, &MainWindow::getPlayersFromConf);
 
 
 }
@@ -30,28 +35,22 @@ ConfigurationWindow::~ConfigurationWindow()
 
 void ConfigurationWindow::amountOfPlayersChanged(int)
 {
-    if (ui->playerAmountSpinBox->value() == 1) {
-        ui->player2NameInput->setEnabled(false);
-        ui->player3NameInput->setEnabled(false);
-        ui->player4NameInput->setEnabled(false);
-        ui->player2NameInput->clear();
-        ui->player3NameInput->clear();
-        ui->player4NameInput->clear();
-    } else if (ui->playerAmountSpinBox->value() == 2) {
-        ui->player2NameInput->setEnabled(true);
-        ui->player3NameInput->setEnabled(false);
-        ui->player4NameInput->setEnabled(false);
-        ui->player3NameInput->clear();
-        ui->player4NameInput->clear();
-    } else if (ui->playerAmountSpinBox->value() == 3) {
-        ui->player2NameInput->setEnabled(true);
-        ui->player3NameInput->setEnabled(true);
-        ui->player4NameInput->setEnabled(false);
-        ui->player4NameInput->clear();
-    }  else {
-        ui->player2NameInput->setEnabled(true);
-        ui->player3NameInput->setEnabled(true);
-        ui->player4NameInput->setEnabled(true);
+    switch (ui->playerAmountSpinBox->value()) {
+        case 2:
+            ui->player3NameInput->setEnabled(false);
+            ui->player4NameInput->setEnabled(false);
+            ui->player3NameInput->clear();
+            ui->player4NameInput->clear();
+            break;
+        case 3:
+            ui->player3NameInput->setEnabled(true);
+            ui->player4NameInput->setEnabled(false);
+            ui->player4NameInput->clear();
+            break;
+        case 4:
+            ui->player3NameInput->setEnabled(true);
+            ui->player4NameInput->setEnabled(true);
+            break;
     }
 }
 
@@ -59,18 +58,13 @@ void ConfigurationWindow::okPressed()
 {
     QString player1 = ui->player1NameInput->text();
     g_->addPlayer(player1);
+    QString player2 = ui->player2NameInput->text();
+    g_->addPlayer(player2);
 
-    if (ui->playerAmountSpinBox->value() == 2) {
-        QString player2 = ui->player2NameInput->text();
-        g_->addPlayer(player2);
-    } else if (ui->playerAmountSpinBox->value() == 3) {
-        QString player2 = ui->player2NameInput->text();
-        g_->addPlayer(player2);
+    if (ui->playerAmountSpinBox->value() == 3) {
         QString player3 = ui->player3NameInput->text();
         g_->addPlayer(player3);
-    }  else if (ui->playerAmountSpinBox->value() == 4){
-        QString player2 = ui->player2NameInput->text();
-        g_->addPlayer(player2);
+    } else if (ui->playerAmountSpinBox->value() == 4) {
         QString player3 = ui->player3NameInput->text();
         g_->addPlayer(player3);
         QString player4 = ui->player4NameInput->text();

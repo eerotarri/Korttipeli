@@ -73,6 +73,7 @@ private:
     void setupUserInterface();
     void updateScenes();
     void updateHand();
+    void waitForReady();
 };
 
 #endif // MAINWINDOW_HH
