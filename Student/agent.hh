@@ -16,6 +16,7 @@ public:
                    QGraphicsScene* scn = NULL);
     virtual ~Agent();
 
+    // Pure virtual method impletemtations from parent classes AgentInterface and CardInterface
     virtual QString name() const;
     virtual QString typeName() const;
     virtual QString title() const;
@@ -30,10 +31,9 @@ public:
     virtual unsigned short connections() const;
     virtual void setConnections(unsigned short connections);
     virtual void modifyConnections(short change);
+
     virtual QGraphicsScene* scene();
     virtual void setScene(QGraphicsScene* scn);
-
-
 
 private:
     // resursseihin paintilla v��nnetyt tikku-ukot kuvaamaan agentteja?
@@ -51,6 +51,7 @@ private:
 
     std::weak_ptr<Interface::Player> owner_;
 
+    // Connections to influencers, also know as 'rep'(?)
     unsigned short connections_;
 
     bool isCommon_;

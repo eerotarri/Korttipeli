@@ -29,8 +29,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setCardDimensions(int width, int height, int padding_x, int padding_y);
-
     void addCardToPlayer();
     void showCardsInHand();
     void clearScene(QGraphicsScene* scene);

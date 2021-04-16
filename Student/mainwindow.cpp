@@ -6,6 +6,7 @@
 #include "settingsreader.h"
 #include "runner.h"
 #include "agent.hh"
+#include "manualcontrol.h"
 
 #include <QFile>
 #include <QGraphicsView>
@@ -15,9 +16,9 @@
 
 #include <QDebug>
 
-static int CARD_WIDTH = 70;
+static int CARD_WIDTH = 80;
 static int CARD_HEIGHT = 100;
-static int PADDING_Y = 20;
+//static int PADDING_Y = 20;
 static int PADDING_X = 7;
 
 const int ACTION_WIDTH = 239;
@@ -43,11 +44,16 @@ MainWindow::MainWindow(QWidget *parent) :
     // Initialize locations
     initializeLocations();
 
-    // Initializes the static runner
-    Interface::Runner r(game_);
+    // Initialize the static runner and set control objects to players
+    std::shared_ptr<Interface::Runner> runner = std::make_shared<Interface::Runner>(game_);
+    for (auto player : game_->players()) {
+        std::shared_ptr<Interface::ManualControl> control_object =
+                std::make_shared<Interface::ManualControl>();
+        runner->setPlayerControl(player, control_object);
+    }
 
-//    addPlayers();
-    currentPlayer_ = game_->currentPlayer();
+
+    currentPlayer_ = game_->currentPlayer(); // THIS SHOULD BECOME OBSOLETE
 
     addCardToPlayer();
     showCardsInHand();
@@ -56,14 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::setCardDimensions(int width, int height, int padding_x, int padding_y)
-{
-    CARD_WIDTH = width;
-    CARD_HEIGHT = height;
-    PADDING_X = padding_x;
-    PADDING_Y = padding_y;
 }
 
 void MainWindow::addCardToPlayer()
@@ -134,14 +132,6 @@ void MainWindow::agentClicked()
             vittu = agent;
         }
     }
-
-
-    // JOS LUET TÄTÄ NI DYNAMIC_POINTER_CAST ON AIKA JUMALA KORTTI
-    // SILLÄ SAA MUUTETTUA CARDINTERFACE TYYPPISEN KUSIPÄÄN AGENTIKS
-    // OLETAN ETTÄ TOIMII VAAN KUN SE OIKEESTI ALUNPERIN OLIKI AGENTTI
-    // MUTTA EIHÄN ME MUUTA TARVITAKKAA :D
-    // LISÄHUOMIONA ETTÄ DYNAMIC_POINTER_CAST TOIMII SMAST POINTTEREILLA
-    // KUN PELKKÄ DYNAMIC_CAST TOIMII NORMI POINTTEREILLA
 
     activeAgent_ = std::dynamic_pointer_cast<Agent>(vittu);
 
@@ -238,6 +228,14 @@ void MainWindow::actionClicked()
         }
     }
     updateScenes();
+
+    // Notify card played
+    for (auto card : game_->currentPlayer()->cards()) {
+        auto agent = std::dynamic_pointer_cast<Agent>(card)->getButton();
+        if (agent == button) {
+            game_->currentPlayer()->playCard(card);
+        }
+    }
 
     emit waitForReady();
 
