@@ -318,6 +318,11 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_actions->setAlignment(Qt::AlignTop);
 
     ui->graphicsView_hand->setScene(scene_hand);
+
+    QImage image("/home/gp/eero-ja-niilo/Student/images/castle.jgp");
+    if (image.isNull()) {
+        qDebug() << "vitut";
+    }
 }
 
 // JOSTAIN ****N SYYSTÄ KUN KOITTAA SIIRTÄÄ AGENTTIA LOKAATIOSTA TOISEEN

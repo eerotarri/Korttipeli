@@ -45,3 +45,6 @@ HEADERS += \
     configurationwindow.hh \
     mainwindow.hh \
     moveagentaction.hh
+
+RESOURCES += \
+    images/
