@@ -20,49 +20,117 @@
 namespace Ui {
 class MainWindow;
 }
-
 class Agent;
 
+/**
+ * @brief Pääikkuna luokka
+ * Luokka piirtää pääikkunan tarvittavilla metodeilla
+
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    /**
+     * @brief MainWindow luokan rakentaja
+     * @param parent
+     */
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    /**
+     * @brief addCardToPlayer jakaa pelaajille pelissä käytettävät kortit
+     */
     void addCardToPlayer();
+    /**
+     * @brief showCardsInHand näyttää vuorossa olevan pelaajan
+     * kädessä olevat kortit
+     */
     void showCardsInHand();
+    /**
+     * @brief clearScene tyhjentää halutun ruudun
+     * @param scene joka tyhjennetään
+     */
     void clearScene(QGraphicsScene* scene);
 
+    /**
+     * @brief Korttien dimensiot ja välien suuruudet
+     */
     static const int CARD_WIDTH = 80;
     static const int CARD_HEIGHT = 110;
     static const int PADDING_Y = 20;
     static const int PADDING_X = 7;
 
+    /**
+     * @brief Siirtonappien dimensiot
+     */
     static const int ACTION_WIDTH = 239;
     static const int ACTION_HEIGHT = 50;
 
+    /**
+     * @brief Kuvien dimensiot
+     */
     static const int ICON_WIDTH = 40;
     static const int ICON_HEIGHT = 100;
 
-
+    /**
+     * @brief Operaatioiden mahdollisuudet onnistua (kymmenestä)
+     */
     static const int KILL_CHANCE = 6;
     static const int SWINDLE_CHANCE = 4;
 
+    /**
+     * @brief Pistemäärä, jonka pelaaja tarvitsee voittaakseen
+     */
     static const int WINNING_SCORE = 10;
 
-
+    /**
+      * @brief Lista pelikentän sijaintien nimistä
+      */
     const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
 
 public slots:
+    /**
+     * @brief agentClicked tapahtuu agenttikorttia klikatessa
+     * @post piirtää operaatiot
+     */
     void agentClicked();
+    /**
+     * @brief moveAction tapahtuu liikkumiseen johtavaa nappia
+     * @post piirtää napit, mihin sijaintiin pelaaja haluaa liikuttaa agentin
+     */
     void moveAction();
+    /**
+     * @brief actionClicked tapahtuu sijainnin valitsemisesta
+     * @post agentti on siirtynyt toiseen sijaintiin
+     */
     void actionClicked();
+    /**
+     * @brief nextPlayer siirtää vuorossa olevan pelaajan seuraavaan
+     * @post vuorossa on seuraava pelaaja
+     */
     void nextPlayer();
+    /**
+     * @brief swindleAction toteuttaa pääikkunassa huijaamisoperaation
+     * @post agentti saa lisää vaikutusvaltaa, jos operaatio onnistuu
+     */
     void swindleAction();
+    /**
+     * @brief killAction toteuttaa pääikkunassa tappamisoperaation
+     * @post agentti saa vastustajan tapetun agentin vaikutusvallan
+     * ja vastustajan agentti palaa käteen, jos operaatio onnistuu
+     */
     void killAction();
+    /**
+     * @brief getSceneItemSize palauttaa halutussa ruudussa olevien agenttien määrän
+     * @param scene_id haluttu ruutu
+     * @return agenttien määrä ruudussa
+     */
     unsigned int getSceneItemSize(unsigned int scene_id);
+    /**
+     * @brief endGame päättää pelin, kun joku pelaajista on voittanut
+     * @post peli on päättynyt ja pelin voi sulkea
+     */
     void endGame();
 
 private:
