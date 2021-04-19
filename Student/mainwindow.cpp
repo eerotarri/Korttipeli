@@ -280,7 +280,7 @@ void MainWindow::nextPlayer()
         for (auto card : player->cards()) {
             pts += std::dynamic_pointer_cast<Agent>(card)->connections();
         }
-        qDebug() << pts << " player";
+        qDebug() << pts << player->name();
         if (pts >= 10) {
             game_->setActive(false);
             winner_ = player;
