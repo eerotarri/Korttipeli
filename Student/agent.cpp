@@ -1,17 +1,17 @@
 #include "agent.hh"
 
-Agent::Agent(QPushButton* button, int x_in_scene, int y_in_scene,
+Agent::Agent(QPushButton* button,
              std::weak_ptr<Interface::Player> ownr, std::weak_ptr<Interface::Location> lctn,
-             unsigned short pts, QString name, QString title, QString typeName, QGraphicsScene* scn):
-    name_(name), title_(title),typeName_(typeName), isCommon_(true), scene_(scn)
+             unsigned short pts, QString name, QString typeName, QString title, QGraphicsScene* scene)
 {
     button_ = button;
-    x_ = x_in_scene;
-    y_ = y_in_scene;
+    name_ = name;
+    title_ = title;
+    typeName_ = typeName;
     location_ = lctn;
     connections_ = pts;
     owner_ = ownr;
-
+    scene_ = scene;
 }
 
 Agent::~Agent()
@@ -94,7 +94,7 @@ QGraphicsScene *Agent::scene()
     return scene_;
 }
 
-void Agent::setScene(QGraphicsScene *scn)
+void Agent::setScene(QGraphicsScene *scene)
 {
-    scene_ = scn;
+    scene_ = scene;
 }

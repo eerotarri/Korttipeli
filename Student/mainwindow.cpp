@@ -71,10 +71,10 @@ void MainWindow::addCardToPlayer()
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
             QString name = QString::fromStdString("P") + QString::fromStdString(std::to_string(h)) + QString::fromStdString("\nA" + std::to_string(i + 1));
-            QPushButton* assigned_button = new QPushButton(name); //namee on muutettu koska muuten ei oo mitään indikaattoria että kenen agentti (ja ei näy lockia)
+            QPushButton* assigned_button = new QPushButton(name);
             assigned_button->setIcon(img);
             assigned_button->setIconSize(QSize(40,100));
-            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0,
+            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button,
                                                                               player, game_->locations().at(0),
                                                                               0, name);
             punainen_pallero->setScene(scene_hand);
@@ -227,7 +227,6 @@ void MainWindow::killAction()
         }
     }
 
-    // TÄÄ HEITTÄÄ TOIVOTTAVASTI VIHOLLISEN VITTUU
     if (getRandom() >= 4) {
         enemy_agent->location().lock()->removeAgent(enemy_agent);
         enemy_agent->setPlacement(game_->locations().at(0));
@@ -240,6 +239,15 @@ void MainWindow::killAction()
 
         activeAgent_->modifyConnections(enemy_agent->connections());
         enemy_agent->setConnections(0);
+
+        int i = 0;
+        for (auto card : enemy_agent->owner().lock()->cards()) {
+            if (card->location().lock()->id() == 0) {
+                auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+                button->setGeometry((CARD_WIDTH + PADDING_X) * i, 0, CARD_WIDTH, CARD_HEIGHT);
+                ++i;
+            }
+        }
     } else {
         ui->textBrowser_2->setText("Dice roll unsuccesful");
         activeAgent_->setConnections(0);

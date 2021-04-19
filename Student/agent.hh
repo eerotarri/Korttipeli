@@ -10,10 +10,9 @@
 class Agent: public Interface::AgentInterface
 {
 public:
-    explicit Agent(QPushButton* button = nullptr, int x_in_scene = 0, int y_in_scene = 0,
+    explicit Agent(QPushButton* button = nullptr,
                    std::weak_ptr<Interface::Player> ownr = {}, std::weak_ptr<Interface::Location> lctn = {},
-                   unsigned short pts = 0, QString name = "", QString title = "", QString typeName = "",
-                   QGraphicsScene* scn = NULL);
+                   unsigned short pts = 0, QString name = "", QString typeName = "", QString title = "", QGraphicsScene* scene = nullptr);
     virtual ~Agent();
 
     // Pure virtual method impletemtations from parent classes AgentInterface and CardInterface
@@ -32,14 +31,11 @@ public:
     virtual void setConnections(unsigned short connections);
     virtual void modifyConnections(short change);
 
-    virtual QGraphicsScene* scene();
-    virtual void setScene(QGraphicsScene* scn);
+    QGraphicsScene *scene();
+    virtual void setScene(QGraphicsScene* scene);
+
 
 private:
-    // resursseihin paintilla v��nnetyt tikku-ukot kuvaamaan agentteja?
-    // olemassa konstruktori napille johon embedataan kuva
-    // taustalle voi tiesti tulla v�ri�
-    const QColor color_ = Qt::red;
 
     QString name_;
 
@@ -51,19 +47,13 @@ private:
 
     std::weak_ptr<Interface::Player> owner_;
 
-    // Connections to influencers, also know as 'rep'(?)
     unsigned short connections_;
 
-    bool isCommon_;
-
-    int x_;
-
-    int y_;
+    bool isCommon_ = true;
 
     QPushButton* button_;
 
     QGraphicsScene* scene_;
-
 };
 
 #endif // AGENT_HH
