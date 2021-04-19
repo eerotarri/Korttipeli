@@ -41,7 +41,7 @@ bool KillAgentAction::canPerform() const
 
     qDebug() << size;
 
-    if (size > 1) {
+    if (size > 10) {
         return true;
     } else {
         qDebug() << "ei tappo natsaa";

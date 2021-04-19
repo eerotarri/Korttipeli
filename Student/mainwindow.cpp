@@ -9,6 +9,7 @@
 #include "moveagentaction.hh"
 #include "killagentaction.hh"
 #include "swindleagentaction.hh"
+#include "controlexception.h"
 
 #include <QFile>
 #include <QGraphicsView>
@@ -424,7 +425,12 @@ void MainWindow::perform()
         std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
     }
 
-    runner_->run();
+    try {
+        runner_->run();
+    } catch (Interface::ControlException exception) {
+        qDebug() << exception.msg();
+    }
+
 }
 
 unsigned int MainWindow::getSceneItemSize(unsigned int scene_id)
