@@ -8,9 +8,11 @@ CONFIG += c++14
 SOURCES += \
     agent.cpp \
     configurationwindow.cpp \
+    killagentaction.cpp \
     main.cc \
     mainwindow.cpp \
-    moveagentaction.cpp
+    moveagentaction.cpp \
+    swindleagentaction.cpp
 
 win32:CONFIG(release, debug|release): LIBS += \
     -L$$OUT_PWD/../course/Course/release/ -lCourse
@@ -43,8 +45,10 @@ FORMS += \
 HEADERS += \
     agent.hh \
     configurationwindow.hh \
+    killagentaction.hh \
     mainwindow.hh \
-    moveagentaction.hh
+    moveagentaction.hh \
+    swindleagentaction.hh
 
 RESOURCES += \
     student_resources.qrc

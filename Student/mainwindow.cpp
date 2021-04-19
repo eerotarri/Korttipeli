@@ -7,6 +7,8 @@
 #include "agent.hh"
 #include "manualcontrol.h"
 #include "moveagentaction.hh"
+#include "killagentaction.hh"
+#include "swindleagentaction.hh"
 
 #include <QFile>
 #include <QGraphicsView>
@@ -195,7 +197,6 @@ void MainWindow::moveAction()
 
         ++i;
     }
-
 }
 
 void MainWindow::swindleAction()
@@ -223,21 +224,29 @@ void MainWindow::actionClicked()
         if (scene_1->items().size() < 3) {
             scene_1->addItem(proxy);
             activeAgent_->setScene(scene_1);
+            auto new_location = game_->locations().at(1);
+            activeAgent_->setPlacement(new_location);
         }
     } else if (button->text() == "Marketplace") {
         if (scene_2->items().size() < 3) {
             scene_2->addItem(proxy);
             activeAgent_->setScene(scene_2);
+            auto new_location = game_->locations().at(2);
+            activeAgent_->setPlacement(new_location);
         }
     } else if (button->text() == "Forest") {
         if (scene_3->items().size() < 3) {
             scene_3->addItem(proxy);
             activeAgent_->setScene(scene_3);
+            auto new_location = game_->locations().at(3);
+            activeAgent_->setPlacement(new_location);
         }
     } else if (button->text() == "Slums") {
         if (scene_4->items().size() < 3) {
             scene_4->addItem(proxy);
             activeAgent_->setScene(scene_4);
+            auto new_location = game_->locations().at(4);
+            activeAgent_->setPlacement(new_location);
         }
     }
     updateScenes();
@@ -334,11 +343,6 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_actions->setAlignment(Qt::AlignTop);
 
     ui->graphicsView_hand->setScene(scene_hand);
-
-    QImage image("/home/gp/eero-ja-niilo/Student/images/castle.jgp");
-    if (image.isNull()) {
-        qDebug() << "vitut";
-    }
 }
 
 // JOSTAIN ****N SYYSTÄ KUN KOITTAA SIIRTÄÄ AGENTTIA LOKAATIOSTA TOISEEN
@@ -391,18 +395,36 @@ void MainWindow::waitForReady()
 void MainWindow::perform()
 {
     auto button = qobject_cast<QPushButton *>(sender());
-    std::shared_ptr<MoveAgentAction> next_action = nullptr;
+
+    qDebug() << activeAgent_->location().lock()->id();
 
     if (button->text() == "Move to") {
-        next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+        std::shared_ptr<MoveAgentAction> next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+        std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
     } else if (button->text() == "Swindle") {
-//        next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
-    } else if (button->text() == "Stab") {
-//        next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
+        std::shared_ptr<SwindleAgentAction> next_action = std::make_shared<SwindleAgentAction>(activeAgent_, this);
+        std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
+    } else if (button->text() == "Stab competitor") {
+        std::shared_ptr<KillAgentAction> next_action = std::make_shared<KillAgentAction>(activeAgent_, this);
+        std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
     }
-    std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
 
     runner_->run();
+}
+
+unsigned int MainWindow::getSceneItemSize(unsigned int scene_id)
+{
+    switch (scene_id) {
+        case 1:
+            return scene_1->items().size();
+        case 2:
+            return scene_2->items().size();
+        case 3:
+            return scene_3->items().size();
+        case 4:
+            return scene_4->items().size();
+    }
+    return 0;
 }
 
 void MainWindow::clearScene(QGraphicsScene* scene)

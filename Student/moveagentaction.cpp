@@ -1,5 +1,7 @@
 #include "moveagentaction.hh"
 
+#include <QDebug>
+
 MoveAgentAction::MoveAgentAction(std::shared_ptr<Agent> agent, MainWindow *mw)
 {
     agent_ = agent;
