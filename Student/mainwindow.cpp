@@ -135,6 +135,9 @@ void MainWindow::agentClicked()
     QPushButton* liiku = new QPushButton("Move to");
     scene_actions->addWidget(liiku);
     liiku->setGeometry(0, 0, ACTION_WIDTH, ACTION_HEIGHT);
+    if (agent_moved_) {
+        liiku->setEnabled(false);
+    }
     QPushButton* huijaa = new QPushButton("Swindle");
     scene_actions->addWidget(huijaa);
     huijaa->setGeometry(0, 50, ACTION_WIDTH, ACTION_HEIGHT);
@@ -203,6 +206,7 @@ void MainWindow::swindleAction()
     ui->textBrowser_2->clear();
     ui->textBrowser_2->setText("The swindle command adds good rep to an agent and in turn to its player as well. The chance of"
                                "this dice roll succeeding is decent.");
+    emit waitForReady();
 }
 
 void MainWindow::killAction()
@@ -211,6 +215,7 @@ void MainWindow::killAction()
     ui->textBrowser_2->setText("By killing an adjacent agent the agent (and in turn its player) will gain all its rep. The chance"
                                " of this dice roll being succesful is low. A dead agent returns to its deck and"
                                " can be used again after a cooldown.");
+    emit waitForReady();
 }
 
 void MainWindow::actionClicked()
@@ -219,36 +224,52 @@ void MainWindow::actionClicked()
 
     QGraphicsProxyWidget* proxy = activeAgent_->getButton()->graphicsProxyWidget();
 
+    auto currentLocation = activeAgent_->location().lock();
+
+    // Remove agent from current location
+    for (auto value : currentLocation->agents()) {
+        auto value_as_agent = std::dynamic_pointer_cast<Agent>(value);
+        if (value_as_agent == activeAgent_) {
+            currentLocation->removeAgent(activeAgent_);
+        }
+    }
+    auto new_location = game_->locations().at(0);
+
     if (button->text() == "Castle") {
         if (scene_1->items().size() < 4) {
             scene_1->addItem(proxy);
             activeAgent_->setScene(scene_1);
-            auto new_location = game_->locations().at(1);
-            activeAgent_->setPlacement(new_location);
+            new_location = game_->locations().at(1);
         }
     } else if (button->text() == "Marketplace") {
         if (scene_2->items().size() < 4) {
             scene_2->addItem(proxy);
             activeAgent_->setScene(scene_2);
-            auto new_location = game_->locations().at(2);
-            activeAgent_->setPlacement(new_location);
+            new_location = game_->locations().at(2);
         }
     } else if (button->text() == "Forest") {
         if (scene_3->items().size() < 4) {
             scene_3->addItem(proxy);
             activeAgent_->setScene(scene_3);
-            auto new_location = game_->locations().at(3);
-            activeAgent_->setPlacement(new_location);
+            new_location = game_->locations().at(3);
         }
     } else if (button->text() == "Slums") {
         if (scene_4->items().size() < 4) {
             scene_4->addItem(proxy);
             activeAgent_->setScene(scene_4);
-            auto new_location = game_->locations().at(4);
-            activeAgent_->setPlacement(new_location);
+            new_location = game_->locations().at(4);
         }
     }
+    activeAgent_->setPlacement(new_location);
+    new_location->sendAgent(activeAgent_);
     updateScenes();
+    clearScene(scene_actions);
+    for (auto card : currentPlayer_->cards()) {
+        auto agent = std::dynamic_pointer_cast<Agent>(card);
+        if (activeAgent_->getButton() != agent->getButton()) {
+            agent->getButton()->setEnabled(false);
+        }
+    }
 
 
     // Notify card played
@@ -259,9 +280,7 @@ void MainWindow::actionClicked()
         }
     }
 
-    emit waitForReady();
-
-//    activeAgent_->getButton()->show();
+    agent_moved_ = true;
 }
 
 void MainWindow::nextPlayer()
@@ -287,6 +306,8 @@ void MainWindow::nextPlayer()
 
     showCardsInHand();
     clearScene(scene_actions);
+
+    agent_moved_ = false;
 
     turn_++;
 }
@@ -402,16 +423,12 @@ void MainWindow::waitForReady()
             button->setEnabled(false);
         }
     }
-
-    ui->textBrowser_2->setText(READY_TEXT);
     connect(readyButton, &QAbstractButton::clicked, this, &MainWindow::nextPlayer);
 }
 
 void MainWindow::perform()
 {
     auto button = qobject_cast<QPushButton *>(sender());
-
-    qDebug() << activeAgent_->location().lock()->id();
 
     if (button->text() == "Move to") {
         std::shared_ptr<MoveAgentAction> next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
@@ -426,8 +443,8 @@ void MainWindow::perform()
 
     try {
         runner_->run();
-    } catch (Interface::ControlException exception) {
-        qDebug() << exception.msg();
+    } catch (Interface::ControlException& exception) {
+        ui->textBrowser_2->setText(exception.msg() + "\nThere needs to be an enemy Agent on the location!");
     }
 
 }

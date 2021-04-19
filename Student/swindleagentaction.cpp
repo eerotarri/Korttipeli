@@ -8,12 +8,11 @@ SwindleAgentAction::SwindleAgentAction(std::shared_ptr<Agent> agent, MainWindow 
 
 SwindleAgentAction::~SwindleAgentAction()
 {
-
 }
 
 bool SwindleAgentAction::canPerform() const
 {
-    if (agent_->getButton()->isEnabled()) {
+    if (agent_->location().lock()->id() != 0) {
         return true;
     } else {
         return  false;
