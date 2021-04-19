@@ -43,6 +43,16 @@ public:
     static const int ACTION_WIDTH = 239;
     static const int ACTION_HEIGHT = 50;
 
+    static const int ICON_WIDTH = 40;
+    static const int ICON_HEIGHT = 100;
+
+
+    static const int KILL_CHANCE = 6;
+    static const int SWINDLE_CHANCE = 4;
+
+    static const int WINNING_SCORE = 10;
+
+
     const std::vector<QString> LOCATIONS = {"Castle", "Marketplace", "Forest", "Slums"};
 
 public slots:
@@ -83,7 +93,6 @@ private:
     std::vector<QColor> colors_ = {QColor(255,0,118), QColor(225,0,0), QColor(203,80,80), QColor(80,196,203), QColor(12,83,88),
                                   QColor(27,88,12), QColor(223,151,78), QColor(78,112,223), QColor(151,78,223), QColor(187,235,124),
                                   QColor(255,200,30), QColor(154,255,0)};
-
 
     void initializeLocations();
     void setupUserInterface();

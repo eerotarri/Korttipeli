@@ -19,7 +19,7 @@
 
 #include <QDebug>
 
-const QString READY_TEXT = "Press Ready to pass turn to next player.";
+const QString READY_TEXT = "Press Ready to pass turn on to next player.";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,14 +31,16 @@ MainWindow::MainWindow(QWidget *parent) :
     game_ = std::make_shared<Interface::Game>();
     game_->setActive(true);
 
+    // Draws the external window in which the players choose their nicknames
     ConfigurationWindow c(this, game_);
     c.exec();
 
-    // Initialize locations
     initializeLocations();
 
     // Initialize the static runner and set control objects to players
     runner_ = std::make_shared<Interface::Runner>(game_);
+    // If cancel was clicked in the configuration window the game will steer the user towards closing the
+    // main UI
     if (!game_->players().empty()) {
         for (auto player : game_->players()) {
             std::shared_ptr<Interface::ManualControl> control_object =
@@ -46,16 +48,12 @@ MainWindow::MainWindow(QWidget *parent) :
             runner_->setPlayerControl(player, control_object);
         }
         currentPlayer_ = game_->currentPlayer();
+        // Gives each player 3 agent cards after which the first player's deck is displayed
         addCardToPlayer();
         showCardsInHand();
     } else {
         emit waitForClose();
     }
-
-
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -65,29 +63,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::addCardToPlayer()
 {
-    int j = 0;
-    int h = 1;
+    int color_it = 0;
+    int player_it = 1;
     QIcon img(":/agentimage.png");
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
-            QString name = QString::fromStdString("P") + QString::fromStdString(std::to_string(h)) + QString::fromStdString("\nA" + std::to_string(i + 1));
+            QString name = QString::fromStdString("P") + QString::fromStdString(std::to_string(player_it)) +
+                    QString::fromStdString("\nA" + std::to_string(i + 1));
             QPushButton* assigned_button = new QPushButton(name);
             assigned_button->setIcon(img);
-            assigned_button->setIconSize(QSize(40,100));
-            std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button,
+            assigned_button->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT));
+            std::shared_ptr<Agent> agent = std::make_shared<Agent>(assigned_button,
                                                                               player, game_->locations().at(0),
                                                                               0, name);
-            punainen_pallero->setScene(scene_hand);
-            player->addCard(punainen_pallero);
-            //assigned_button->setAutoFillBackground(1);
+            agent->setScene(scene_hand);
+            player->addCard(agent);
             QPalette p = palette();
-            p.setColor(QPalette::Button, colors_.at(j));
+            p.setColor(QPalette::Button, colors_.at(color_it));
             assigned_button->setPalette(p);
-            j++;
+            color_it++;
 
             playerCards_[player->name()].push_back(assigned_button);
         }
-        h++;
+        player_it++;
     }
 }
 
@@ -108,9 +106,6 @@ void MainWindow::showCardsInHand()
             i++;
         }
     }
-
-
-
     for (auto card : game_->currentPlayer()->cards()) {
         auto agent = std::dynamic_pointer_cast<Agent>(card);
         auto button = agent->getButton();
@@ -124,58 +119,61 @@ void MainWindow::showCardsInHand()
 void MainWindow::agentClicked()
 {
     ui->textBrowser_2->clear();
-    ui->textBrowser_2->setText("The points of the current player among with some other status stuff: "
-                               "(a method should print this stuff out whenever the context browser isn't busy");
+    unsigned short pts = 0;
+    for (auto card : game_->currentPlayer()->cards()) {
+        auto c = std::dynamic_pointer_cast<Agent>(card);
+        pts += c->connections();
+    }
+    ui->textBrowser_2->setText(game_->currentPlayer()->name() + " has" + pts + " points");
     clearScene(scene_actions);
 
     auto button = qobject_cast<QPushButton *>(sender());
 
-    std::shared_ptr<Interface::CardInterface> vittu;
+    std::shared_ptr<Interface::CardInterface> crd;
 
     for (auto agent : game_->currentPlayer()->cards()) {
         if (agent->name() == button->text()) {
-            vittu = agent;
+            crd = agent;
         }
     }
 
-    activeAgent_ = std::dynamic_pointer_cast<Agent>(vittu);
+    activeAgent_ = std::dynamic_pointer_cast<Agent>(crd);
 
-    QPushButton* liiku = new QPushButton("Move to");
-    scene_actions->addWidget(liiku);
-    liiku->setGeometry(0, 0, ACTION_WIDTH, ACTION_HEIGHT);
+    QPushButton* move = new QPushButton("Move to");
+    scene_actions->addWidget(move);
+    move->setGeometry(0, 0, ACTION_WIDTH, ACTION_HEIGHT);
     if (agent_moved_) {
-        liiku->setEnabled(false);
+        move->setEnabled(false);
     }
-    QPushButton* huijaa = new QPushButton("Swindle");
-    scene_actions->addWidget(huijaa);
-    huijaa->setGeometry(0, 50, ACTION_WIDTH, ACTION_HEIGHT);
-    QPushButton* tapa = new QPushButton("Stab competitor");
-    scene_actions->addWidget(tapa);
-    tapa->setGeometry(0, 100, ACTION_WIDTH, ACTION_HEIGHT);
+    QPushButton* swindle = new QPushButton("Swindle");
+    scene_actions->addWidget(swindle);
+    swindle->setGeometry(0, 50, ACTION_WIDTH, ACTION_HEIGHT);
+    QPushButton* kill = new QPushButton("Stab competitor");
+    scene_actions->addWidget(kill);
+    kill->setGeometry(0, 100, ACTION_WIDTH, ACTION_HEIGHT);
     if (activeAgent_->scene() == scene_hand){
-        huijaa->setEnabled(false);
-        tapa->setEnabled(false);
+        swindle->setEnabled(false);
+        kill->setEnabled(false);
     } else {
-        //qDebug() << "mene vittu elseen";
-        huijaa->setEnabled(true);
+        swindle->setEnabled(true);
         if (activeAgent_->scene()->items().size() >= 2 and activeAgent_->scene()) {
-            tapa->setEnabled(true);
+            kill->setEnabled(true);
         } else {
-            tapa->setEnabled(false);
+            kill->setEnabled(false);
         }
 
     }
 
-    connect(liiku, &QPushButton::clicked, this, &MainWindow::perform);
-    connect(huijaa, &QPushButton::clicked, this, &MainWindow::perform);
-    connect(tapa, &QPushButton::clicked, this, &MainWindow::perform);
+    connect(move, &QPushButton::clicked, this, &MainWindow::perform);
+    connect(swindle, &QPushButton::clicked, this, &MainWindow::perform);
+    connect(kill, &QPushButton::clicked, this, &MainWindow::perform);
 }
 
 void MainWindow::moveAction()
 {
     clearScene(scene_actions);
     ui->textBrowser_2->clear();
-    ui->textBrowser_2->setText("Move command context here TBA");
+    ui->textBrowser_2->setText("Move agent to a location with less the 3 agents in it");
 
 
     int i = 0;
@@ -200,14 +198,12 @@ void MainWindow::swindleAction()
 {
     ui->textBrowser_2->clear();
     unsigned short random = getRandom();
-    qDebug() << random;
-    if (random >= 4) {
+    if (random > SWINDLE_CHANCE) {
         activeAgent_->modifyConnections(1);
-        ui->textBrowser_2->setText("Dice roll succesful.");
+        ui->textBrowser_2->setText("Dice roll successful.");
     } else {
-        ui->textBrowser_2->setText("Dice roll unsuccesful.");
+        ui->textBrowser_2->setText("Dice roll unsuccessful.");
     }
-    qDebug() << "got here";
     emit waitForReady();
 }
 
@@ -215,10 +211,9 @@ void MainWindow::killAction()
 {
     ui->textBrowser_2->clear();
     ui->textBrowser_2->setText("By killing an adjacent agent the agent (and in turn its player) will gain all its rep. The chance"
-                               " of this dice roll being succesful is low. A dead agent returns to its deck and"
-                               " can be used again after a cooldown.");
+                               " of this dice roll being succesful is low. A dead agent returns to its owner's deck.");
 
-    // This finds the first enemy agent
+    // This finds the first enemy agent in the location of the stabber
     std::shared_ptr<Agent> enemy_agent = nullptr;
     for (auto abstract_agent : activeAgent_->location().lock()->agents()) {
         if (abstract_agent->owner().lock() != activeAgent_->owner().lock()) {
@@ -227,20 +222,24 @@ void MainWindow::killAction()
         }
     }
 
-    if (getRandom() >= 4) {
+    if (getRandom() >= KILL_CHANCE) {
         enemy_agent->location().lock()->removeAgent(enemy_agent);
         enemy_agent->setPlacement(game_->locations().at(0));
         enemy_agent->location().lock()->sendAgent(enemy_agent);
+        // Moving the visual representations of agents turned out to be very troublesome.
+        // By making proxies of the original buttons we managed to get the buttons in their correct places without displacement
         QGraphicsProxyWidget* proxy = enemy_agent->getButton()->graphicsProxyWidget();
         scene_hand->addItem(proxy);
         enemy_agent->setScene(scene_hand);
         enemy_agent->getButton()->setVisible(false);
-        ui->textBrowser_2->setText("Dice roll succesful");
+        ui->textBrowser_2->setText("Dice roll successful");
 
         activeAgent_->modifyConnections(enemy_agent->connections());
         enemy_agent->setConnections(0);
 
         int i = 0;
+        // When moving the killed agent back to its owner's deck, we need to
+        // set the geometry separately or the agents might end up on top of each other
         for (auto card : enemy_agent->owner().lock()->cards()) {
             if (card->location().lock()->id() == 0) {
                 auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -249,13 +248,12 @@ void MainWindow::killAction()
             }
         }
     } else {
-        ui->textBrowser_2->setText("Dice roll unsuccesful");
+        ui->textBrowser_2->setText("Dice roll unsuccessful");
         activeAgent_->setConnections(0);
     }
-
-
     emit waitForReady();
 }
+
 
 void MainWindow::actionClicked()
 {
@@ -311,7 +309,6 @@ void MainWindow::actionClicked()
         }
     }
 
-
     // Notify card played
     for (auto card : game_->currentPlayer()->cards()) {
         auto agent = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -320,18 +317,19 @@ void MainWindow::actionClicked()
         }
     }
 
+    // One agent can be played per turn. Having moved the agent can perform either swindle or kill (if competitor(s) are present
     agent_moved_ = true;
 }
 
 void MainWindow::nextPlayer()
 {
+    // Check if a player has won
     for (auto player : game_->players()) {
         unsigned short pts = 0;
         for (auto card : player->cards()) {
             pts += std::dynamic_pointer_cast<Agent>(card)->connections();
         }
-        qDebug() << pts << player->name();
-        if (pts >= 10) {
+        if (pts >= WINNING_SCORE) {
             game_->setActive(false);
             winner_ = player;
         }
