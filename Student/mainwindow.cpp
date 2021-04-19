@@ -39,17 +39,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Initialize the static runner and set control objects to players
     runner_ = std::make_shared<Interface::Runner>(game_);
-    for (auto player : game_->players()) {
-        std::shared_ptr<Interface::ManualControl> control_object =
-                std::make_shared<Interface::ManualControl>();
-        runner_->setPlayerControl(player, control_object);
+    if (!game_->players().empty()) {
+        for (auto player : game_->players()) {
+            std::shared_ptr<Interface::ManualControl> control_object =
+                    std::make_shared<Interface::ManualControl>();
+            runner_->setPlayerControl(player, control_object);
+        }
+        currentPlayer_ = game_->currentPlayer();
+        addCardToPlayer();
+        showCardsInHand();
+    } else {
+        emit waitForClose();
     }
 
 
-    currentPlayer_ = game_->currentPlayer(); // THIS SHOULD BECOME OBSOLETE
 
-    addCardToPlayer();
-    showCardsInHand();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -217,11 +223,28 @@ void MainWindow::killAction()
     for (auto abstract_agent : activeAgent_->location().lock()->agents()) {
         if (abstract_agent->owner().lock() != activeAgent_->owner().lock()) {
             enemy_agent = std::dynamic_pointer_cast<Agent>(abstract_agent);
+            break;
         }
     }
 
     // TÄÄ HEITTÄÄ TOIVOTTAVASTI VIHOLLISEN VITTUU
-    enemy_agent->setPlacement(game_->locations().at(0));
+    if (getRandom() >= 4) {
+        enemy_agent->location().lock()->removeAgent(enemy_agent);
+        enemy_agent->setPlacement(game_->locations().at(0));
+        enemy_agent->location().lock()->sendAgent(enemy_agent);
+        QGraphicsProxyWidget* proxy = enemy_agent->getButton()->graphicsProxyWidget();
+        scene_hand->addItem(proxy);
+        enemy_agent->setScene(scene_hand);
+        enemy_agent->getButton()->setVisible(false);
+        ui->textBrowser_2->setText("Dice roll succesful");
+
+        activeAgent_->modifyConnections(enemy_agent->connections());
+        enemy_agent->setConnections(0);
+    } else {
+        ui->textBrowser_2->setText("Dice roll unsuccesful");
+        activeAgent_->setConnections(0);
+    }
+
 
     emit waitForReady();
 }
@@ -459,8 +482,11 @@ void MainWindow::waitForClose()
             button->setEnabled(false);
         }
     }
-
-    ui->textBrowser_2->setText("Player " + winner_->name() + " has won");
+    if (winner_ != nullptr) {
+        ui->textBrowser_2->setText("Player " + winner_->name() + " has won");
+    } else {
+        ui->textBrowser_2->setText("No player has won.");
+    }
     connect(closeButton, &QAbstractButton::clicked, this, &MainWindow::endGame);
 }
 

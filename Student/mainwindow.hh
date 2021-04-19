@@ -62,7 +62,7 @@ private:
     std::shared_ptr<Interface::Runner> runner_;
 
     std::shared_ptr<Interface::Player> currentPlayer_;
-    std::shared_ptr<Interface::Player> winner_;
+    std::shared_ptr<Interface::Player> winner_ = nullptr;
 
 
     std::map<QString, std::vector<QPushButton*>> playerCards_;
