@@ -49,9 +49,6 @@ void AgentTest::createAgentCase()
     QCOMPARE(agent->location().lock()->id(), 0);
     QCOMPARE(agent->location().lock()->name(), "TestLocation");
     QCOMPARE(agent->owner().lock(), g->players().at(0));
-
-
-
 }
 
 QTEST_MAIN(AgentTest)

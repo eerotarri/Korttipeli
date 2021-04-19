@@ -6,7 +6,14 @@
 #include "location.h"
 #include "QGraphicsScene"
 
-
+/**
+ * @brief Yksittäisen agentin kuvaava luokka
+ *
+ * Agent on periytetty AgentInterface luokasta eli sisältää sen ja CardInterface luokan.
+ *
+ * Luokka kuvaa agentin osana peliä, eli tallentaa ns. kortin instanssin ja
+ * toimii erityisesti korttia (nappia) tallentavana tahona.
+ */
 class Agent: public Interface::AgentInterface
 {
 public:

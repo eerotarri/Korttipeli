@@ -56,6 +56,7 @@ void ConfigurationWindow::amountOfPlayersChanged(int)
 
 void ConfigurationWindow::okPressed()
 {
+    // Always adds at least two players
     QString player1 = ui->player1NameInput->text();
     g_->addPlayer(player1);
     QString player2 = ui->player2NameInput->text();
