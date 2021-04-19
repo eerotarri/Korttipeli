@@ -60,10 +60,11 @@ MainWindow::~MainWindow()
 void MainWindow::addCardToPlayer()
 {
     int j = 0;
+    int h = 1;
     QIcon img(":/agentimage.png");
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
-            QString name = QString::fromStdString("P") + QString::fromStdString(std::to_string(i + 1)) + QString::fromStdString("\nA" + std::to_string(i + 1));
+            QString name = QString::fromStdString("P") + QString::fromStdString(std::to_string(h)) + QString::fromStdString("\nA" + std::to_string(i + 1));
             QPushButton* assigned_button = new QPushButton(name); //namee on muutettu koska muuten ei oo mitään indikaattoria että kenen agentti (ja ei näy lockia)
             assigned_button->setIcon(img);
             assigned_button->setIconSize(QSize(40,100));
@@ -80,6 +81,7 @@ void MainWindow::addCardToPlayer()
 
             playerCards_[player->name()].push_back(assigned_button);
         }
+        h++;
     }
 }
 
@@ -204,8 +206,15 @@ void MainWindow::moveAction()
 void MainWindow::swindleAction()
 {
     ui->textBrowser_2->clear();
-    ui->textBrowser_2->setText("The swindle command adds good rep to an agent and in turn to its player as well. The chance of"
-                               "this dice roll succeeding is decent.");
+
+    //unsigned short proba = random_->die();
+    if (4 >= 2) {
+        activeAgent_->modifyConnections(1);
+        ui->textBrowser_2->setText("Dice roll succesful.");
+    } else {
+        ui->textBrowser_2->setText("Dice roll unsuccesful.");
+    }
+    qDebug() << "got here";
     emit waitForReady();
 }
 
@@ -285,6 +294,17 @@ void MainWindow::actionClicked()
 
 void MainWindow::nextPlayer()
 {
+    for (auto player : game_->players()) {
+        unsigned short pts = 0;
+        for (auto card : player->cards()) {
+            pts += std::dynamic_pointer_cast<Agent>(card)->connections();
+        }
+        qDebug() << pts << " player";
+        if (pts >= 10) {
+            game_->setActive(false);
+            winner_ = player;
+        }
+    }
     // Disables "previous players" buttons
     for (auto card : game_->currentPlayer()->cards()) {
         auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -310,11 +330,12 @@ void MainWindow::nextPlayer()
     agent_moved_ = false;
 
     turn_++;
+    if (game_->active() == false) {
+        waitForClose();
+    }
 }
 
-void setNewLocation() {
-    // idea: omat skenet kullekin pelaajalle joista kerrallaan vaan yks ei lukittu?
-}
+
 
 void MainWindow::initializeLocations()
 {
@@ -426,6 +447,30 @@ void MainWindow::waitForReady()
     connect(readyButton, &QAbstractButton::clicked, this, &MainWindow::nextPlayer);
 }
 
+void MainWindow::waitForClose()
+{
+    clearScene(scene_actions);
+    QPushButton* closeButton = new QPushButton("Close");
+    closeButton->resize(ACTION_WIDTH, ACTION_HEIGHT);
+    scene_actions->addWidget(closeButton);
+
+    // Disables all buttons so Ready is the only thing you can press
+    for (auto player : game_->players()) {
+        for (auto card : player->cards()) {
+            auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
+            button->setEnabled(false);
+        }
+    }
+
+    ui->textBrowser_2->setText("Player " + winner_->name() + " has won");
+    connect(closeButton, &QAbstractButton::clicked, this, &MainWindow::endGame);
+}
+
+void MainWindow::endGame()
+{
+    MainWindow::close();
+}
+
 void MainWindow::perform()
 {
     auto button = qobject_cast<QPushButton *>(sender());
@@ -444,7 +489,7 @@ void MainWindow::perform()
     try {
         runner_->run();
     } catch (Interface::ControlException& exception) {
-        ui->textBrowser_2->setText(exception.msg() + "\nThere needs to be an enemy Agent on the location!");
+        ui->textBrowser_2->setText(exception.msg() + "\nThere has to be an enemy Agent on the location!");
     }
 
 }
