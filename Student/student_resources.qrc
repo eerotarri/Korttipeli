@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>agentimage.png</file>
+        <file>agenttest.jpg</file>
+        <file>metaagent.png</file>
+        <file>castle.jpg</file>
+        <file>forest.jpg</file>
+        <file>marketplace.jpg</file>
+        <file>slums.jpg</file>
+    </qresource>
+</RCC>

@@ -56,21 +56,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::addCardToPlayer()
 {
+    // lokaatioiden laabelit voi ottaa vittuun sit ku lisää noihin skeneihin backgroundimaget
+    // kuva on kärpäsenpaskan kokone jos ei tee iconina
     int j = 0;
+    QIcon img(":/agentimage.png");
     for (auto player : game_->players()) {
         for (int i = 0; i < 3; i++) {
-            QString name = player->name() + QString::fromStdString("\nAgent: " + std::to_string(i + 1));
-            QPushButton* assigned_button = new QPushButton(name);
-
+            QString name = QString::fromStdString("P") + QString::fromStdString(std::to_string(i + 1)) + QString::fromStdString("\nA" + std::to_string(i + 1));
+            QPushButton* assigned_button = new QPushButton(name); //namee on muutettu koska muuten ei oo mitään indikaattoria että kenen agentti (ja ei näy lockia)
+            assigned_button->setIcon(img);
+            assigned_button->setIconSize(QSize(40,100));
             std::shared_ptr<Agent> punainen_pallero = std::make_shared<Agent>(assigned_button, 0, 0,
                                                                               player, game_->locations().at(0),
                                                                               0, name);
             punainen_pallero->setScene(scene_hand);
             player->addCard(punainen_pallero);
+            //assigned_button->setAutoFillBackground(1);
             QPalette p = palette();
             p.setColor(QPalette::Button, colors_.at(j));
             assigned_button->setPalette(p);
             j++;
+
             playerCards_[player->name()].push_back(assigned_button);
         }
     }
@@ -296,12 +302,22 @@ void MainWindow::initializeLocations()
 
 void MainWindow::setupUserInterface()
 {
+    QPixmap castle(":/castle.jpg");
+    castle.scaled(80, 80, Qt::IgnoreAspectRatio);
+    QPixmap marketplace(":/marketplace.jpg");
+    QPixmap forest(":/forest.jpg");
+    QPixmap slums(":/slums.jpg");
+
     ui->setupUi(this);
     // Creating scenes to store items for example buttons for Agents
     scene_1 = new QGraphicsScene(ui->graphicsView);
+    scene_1->addPixmap(castle);
     scene_2 = new QGraphicsScene(ui->graphicsView_2);
+    //scene_2->addPixmap(marketplace);
     scene_3 = new QGraphicsScene(ui->graphicsView_3);
+    //scene_3->addPixmap(forest);
     scene_4 = new QGraphicsScene(ui->graphicsView_4);
+    //scene_4->addPixmap(slums);
     scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
