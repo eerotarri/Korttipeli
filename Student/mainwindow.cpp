@@ -183,12 +183,19 @@ void MainWindow::moveAction()
     }
 }
 
+unsigned short MainWindow::getRandom()
+{
+    int low = 1, high = 10;
+    int range = (high - low) + 1;
+    return range * (rand() / (RAND_MAX + 1.0));
+}
+
 void MainWindow::swindleAction()
 {
     ui->textBrowser_2->clear();
-
-    //unsigned short proba = random_->die();
-    if (4 >= 2) {
+    unsigned short random = getRandom();
+    qDebug() << random;
+    if (random >= 4) {
         activeAgent_->modifyConnections(1);
         ui->textBrowser_2->setText("Dice roll succesful.");
     } else {
@@ -292,7 +299,7 @@ void MainWindow::nextPlayer()
         for (auto card : player->cards()) {
             pts += std::dynamic_pointer_cast<Agent>(card)->connections();
         }
-        qDebug() << pts << " player";
+        qDebug() << pts << player->name();
         if (pts >= 10) {
             game_->setActive(false);
             winner_ = player;

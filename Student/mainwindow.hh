@@ -60,7 +60,6 @@ private:
 
     std::shared_ptr<Interface::Game> game_;
     std::shared_ptr<Interface::Runner> runner_;
-    std::shared_ptr<Interface::Random> random_;
 
     std::shared_ptr<Interface::Player> currentPlayer_;
     std::shared_ptr<Interface::Player> winner_;
@@ -93,6 +92,7 @@ private:
     void waitForReady();
     void waitForClose();
     void perform();
+    unsigned short getRandom();
 
 };
 
