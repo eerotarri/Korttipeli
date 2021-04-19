@@ -182,7 +182,9 @@ void MainWindow::moveAction()
         scene_actions->addWidget(action);
         action->setGeometry(0, ACTION_HEIGHT * i, ACTION_WIDTH, ACTION_HEIGHT);
         connect(action, &QPushButton::clicked, this, &MainWindow::actionClicked);
-
+        if (action->text() == activeAgent_->location().lock()->name()) {
+            action->setEnabled(false);
+        }
         ++i;
     }
 }
@@ -319,6 +321,7 @@ void MainWindow::actionClicked()
 
     // One agent can be played per turn. Having moved the agent can perform either swindle or kill (if competitor(s) are present
     agent_moved_ = true;
+
 }
 
 void MainWindow::nextPlayer()
