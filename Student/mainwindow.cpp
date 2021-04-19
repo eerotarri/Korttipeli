@@ -302,22 +302,17 @@ void MainWindow::initializeLocations()
 
 void MainWindow::setupUserInterface()
 {
-    QPixmap castle(":/castle.jpg");
-    castle.scaled(80, 80, Qt::IgnoreAspectRatio);
-    QPixmap marketplace(":/marketplace.jpg");
-    QPixmap forest(":/forest.jpg");
-    QPixmap slums(":/slums.jpg");
+
 
     ui->setupUi(this);
     // Creating scenes to store items for example buttons for Agents
     scene_1 = new QGraphicsScene(ui->graphicsView);
-    scene_1->addPixmap(castle);
     scene_2 = new QGraphicsScene(ui->graphicsView_2);
-    //scene_2->addPixmap(marketplace);
+
     scene_3 = new QGraphicsScene(ui->graphicsView_3);
-    //scene_3->addPixmap(forest);
+
     scene_4 = new QGraphicsScene(ui->graphicsView_4);
-    //scene_4->addPixmap(slums);
+
     scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
@@ -332,6 +327,26 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_4->setAlignment(Qt::AlignCenter);
     ui->graphicsView_actions->setScene(scene_actions);
     ui->graphicsView_actions->setAlignment(Qt::AlignTop);
+    QPixmap castle(":/castle.jpg");
+    QPixmap marketplace(":/marketplace.jpg");
+    QPixmap forest(":/forest.jpg");
+    QPixmap slums(":/slums.jpg");
+
+    castle.setDevicePixelRatio(0.15);
+    scene_1->addPixmap(castle);
+    ui->graphicsView->fitInView(castle.rect(), Qt::KeepAspectRatio);
+
+    marketplace.setDevicePixelRatio(0.15);
+    scene_2->addPixmap(marketplace);
+    ui->graphicsView_2->fitInView(marketplace.rect(), Qt::KeepAspectRatio);
+
+    forest.setDevicePixelRatio(0.15);
+    scene_3->addPixmap(forest);
+    ui->graphicsView_3->fitInView(forest.rect(), Qt::KeepAspectRatio);
+
+    slums.setDevicePixelRatio(0.15);
+    scene_4->addPixmap(slums);
+    ui->graphicsView_4->fitInView(slums.rect(), Qt::KeepAspectRatio);
 
     ui->graphicsView_hand->setScene(scene_hand);
 }
