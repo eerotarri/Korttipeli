@@ -14,10 +14,11 @@ KillAgentAction::~KillAgentAction()
 
 bool KillAgentAction::canPerform() const
 {
-    // Checks that agent is not alone in the location
+    // Katsoo, ettei agentti ole yksin sijainnissaan
     auto agents = agent_->location().lock()->agents();
-    bool has_enemies = false;
 
+    // Katsoo, että agentin seurassa on vastustajan agentti
+    bool has_enemies = false;
     for (auto agent : agents) {
         if (agent->owner().lock() != agent_->owner().lock()) {
             has_enemies = true;
