@@ -47,4 +47,4 @@ HEADERS += \
     moveagentaction.hh
 
 RESOURCES += \
-    images/
+    student_resources.qrc
