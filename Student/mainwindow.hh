@@ -70,6 +70,8 @@ private:
 
     std::shared_ptr<Agent> activeAgent_;
 
+    bool agent_moved_ = false;
+
     QGraphicsScene* scene_1;
     QGraphicsScene* scene_2;
     QGraphicsScene* scene_3;

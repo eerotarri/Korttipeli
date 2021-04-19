@@ -14,37 +14,19 @@ KillAgentAction::~KillAgentAction()
 
 bool KillAgentAction::canPerform() const
 {
-    // Tähän tarkastelut milloin voi suorittaa tapon
-    unsigned int size = 0;
-    switch (agent_->location().lock()->id()) {
-        case 1: {
-            // Agent is in Castle
-            size = mainwindow_->getSceneItemSize(1);
-            break;
-        }
-        case 2: {
-            // Agent is in Market
-            size = mainwindow_->getSceneItemSize(2);
-            break;
-        }
-        case 3: {
-            // Agent is in Forest
-            size = mainwindow_->getSceneItemSize(3);
-            break;
-        }
-        case 4: {
-            // Agent is in Slums
-            size = mainwindow_->getSceneItemSize(4);
-            break;
+    // Checks that agent is not alone in the location
+    auto agents = agent_->location().lock()->agents();
+    bool has_enemies = false;
+
+    for (auto agent : agents) {
+        if (agent->owner().lock() != agent_->owner().lock()) {
+            has_enemies = true;
         }
     }
 
-    qDebug() << size;
-
-    if (size > 1) {
+    if (agents.size() >= 2 && has_enemies) {
         return true;
     } else {
-        qDebug() << "ei tappo natsaa";
         return  false;
     }
 }
