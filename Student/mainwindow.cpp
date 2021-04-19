@@ -58,8 +58,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::addCardToPlayer()
 {
-    // lokaatioiden laabelit voi ottaa vittuun sit ku lisää noihin skeneihin backgroundimaget
-    // kuva on kärpäsenpaskan kokone jos ei tee iconina
     int j = 0;
     QIcon img(":/agentimage.png");
     for (auto player : game_->players()) {
