@@ -146,8 +146,6 @@ void MainWindow::agentClicked()
     QPushButton* tapa = new QPushButton("Stab competitor");
     scene_actions->addWidget(tapa);
     tapa->setGeometry(0, 100, ACTION_WIDTH, ACTION_HEIGHT);
-//    unsigned int weak_location = game_->locations().at(0)->id();
-//    unsigned int vittu_location = vittu->location().lock()->id();
     if (activeAgent_->scene() == scene_hand){
         huijaa->setEnabled(false);
         tapa->setEnabled(false);
@@ -162,27 +160,9 @@ void MainWindow::agentClicked()
 
     }
 
-    /*
-     * Eli kirjottelen tähän suunnitelman
-     * -> Painetaan nappia 'Move to' (tapahtunut jo)
-     * -> Manual controllin action asetetaan MoveActionAgent tyypiksi
-     * -> runner ajetaan ja se toteaa että jaha tällanen manual control päättää
-     * -> Manual control on että joo olisko toi MoveActionAgent ku attribuutissa lukee niin
-     * -> MoveActionAgent performaa
-     */
-
-    // This sets the next user action as moveAction // mutta nyt kaikki napit moveActioniin
-    // MENNÄÄN SINNE PERFORMIIN MUTTA SE TARKISTAA MITÄ SITTEN TAPAHTUU?
-//    std::shared_ptr<MoveAgentAction> next_action = std::make_shared<MoveAgentAction>(activeAgent_, this);
-//    std::dynamic_pointer_cast<Interface::ManualControl>(runner_->playerControl(currentPlayer_))->setNextAction(next_action);
-
     connect(liiku, &QPushButton::clicked, this, &MainWindow::perform);
     connect(huijaa, &QPushButton::clicked, this, &MainWindow::perform);
     connect(tapa, &QPushButton::clicked, this, &MainWindow::perform);
-
-//    connect(liiku, &QPushButton::clicked, this, &MainWindow::moveAction);
-//    connect(huijaa, &QPushButton::clicked, this, &MainWindow::swindleAction);
-//    connect(tapa, &QPushButton::clicked, this, &MainWindow::killAction);
 }
 
 void MainWindow::moveAction()
@@ -224,6 +204,18 @@ void MainWindow::killAction()
     ui->textBrowser_2->setText("By killing an adjacent agent the agent (and in turn its player) will gain all its rep. The chance"
                                " of this dice roll being succesful is low. A dead agent returns to its deck and"
                                " can be used again after a cooldown.");
+
+    // This finds the first enemy agent
+    std::shared_ptr<Agent> enemy_agent = nullptr;
+    for (auto abstract_agent : activeAgent_->location().lock()->agents()) {
+        if (abstract_agent->owner().lock() != activeAgent_->owner().lock()) {
+            enemy_agent = std::dynamic_pointer_cast<Agent>(abstract_agent);
+        }
+    }
+
+    // TÄÄ HEITTÄÄ TOIVOTTAVASTI VIHOLLISEN VITTUU
+    enemy_agent->setPlacement(game_->locations().at(0));
+
     emit waitForReady();
 }
 
@@ -269,6 +261,7 @@ void MainWindow::actionClicked()
             new_location = game_->locations().at(4);
         }
     }
+
     activeAgent_->setPlacement(new_location);
     new_location->sendAgent(activeAgent_);
     updateScenes();
@@ -402,8 +395,6 @@ void MainWindow::setupUserInterface()
 
 }
 
-// JOSTAIN ****N SYYSTÄ KUN KOITTAA SIIRTÄÄ AGENTTIA LOKAATIOSTA TOISEEN
-// SE DISPLACEE NIIN HEVON****STI
 void MainWindow::updateScenes()
 {
     std::vector<QGraphicsScene*> scenes = {scene_1, scene_2, scene_3, scene_4};
