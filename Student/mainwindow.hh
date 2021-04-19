@@ -35,7 +35,7 @@ public:
     void clearScene(QGraphicsScene* scene);
 
     static const int CARD_WIDTH = 80;
-    static const int CARD_HEIGHT = 100;
+    static const int CARD_HEIGHT = 110;
     static const int PADDING_Y = 20;
     static const int PADDING_X = 7;
 

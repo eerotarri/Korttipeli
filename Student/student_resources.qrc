@@ -7,5 +7,10 @@
         <file>forest.jpg</file>
         <file>marketplace.jpg</file>
         <file>slums.jpg</file>
+        <file>castle_test.jpg</file>
+        <file>castle_test2.jpg</file>
+        <file>forest_test2.jpg</file>
+        <file>marketplace_downscale.jpg</file>
+        <file>slums_downscale.jpg</file>
     </qresource>
 </RCC>

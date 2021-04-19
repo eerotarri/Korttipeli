@@ -59,8 +59,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::addCardToPlayer()
 {
-    // lokaatioiden laabelit voi ottaa vittuun sit ku lisää noihin skeneihin backgroundimaget
-    // kuva on kärpäsenpaskan kokone jos ei tee iconina
     int j = 0;
     QIcon img(":/agentimage.png");
     for (auto player : game_->players()) {
@@ -222,28 +220,28 @@ void MainWindow::actionClicked()
     QGraphicsProxyWidget* proxy = activeAgent_->getButton()->graphicsProxyWidget();
 
     if (button->text() == "Castle") {
-        if (scene_1->items().size() < 3) {
+        if (scene_1->items().size() < 4) {
             scene_1->addItem(proxy);
             activeAgent_->setScene(scene_1);
             auto new_location = game_->locations().at(1);
             activeAgent_->setPlacement(new_location);
         }
     } else if (button->text() == "Marketplace") {
-        if (scene_2->items().size() < 3) {
+        if (scene_2->items().size() < 4) {
             scene_2->addItem(proxy);
             activeAgent_->setScene(scene_2);
             auto new_location = game_->locations().at(2);
             activeAgent_->setPlacement(new_location);
         }
     } else if (button->text() == "Forest") {
-        if (scene_3->items().size() < 3) {
+        if (scene_3->items().size() < 4) {
             scene_3->addItem(proxy);
             activeAgent_->setScene(scene_3);
             auto new_location = game_->locations().at(3);
             activeAgent_->setPlacement(new_location);
         }
     } else if (button->text() == "Slums") {
-        if (scene_4->items().size() < 3) {
+        if (scene_4->items().size() < 4) {
             scene_4->addItem(proxy);
             activeAgent_->setScene(scene_4);
             auto new_location = game_->locations().at(4);
@@ -337,10 +335,10 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_4->setAlignment(Qt::AlignCenter);
     ui->graphicsView_actions->setScene(scene_actions);
     ui->graphicsView_actions->setAlignment(Qt::AlignTop);
-    QPixmap castle(":/castle.jpg");
-    QPixmap marketplace(":/marketplace.jpg");
-    QPixmap forest(":/forest.jpg");
-    QPixmap slums(":/slums.jpg");
+    QPixmap castle(":/castle_test2.jpg");
+    QPixmap marketplace(":/marketplace_downscale.jpg");
+    QPixmap forest(":/forest_test2.jpg");
+    QPixmap slums(":/slums_downscale.jpg");
 
     castle.setDevicePixelRatio(0.15);
     scene_1->addPixmap(castle);
@@ -359,6 +357,7 @@ void MainWindow::setupUserInterface()
     ui->graphicsView_4->fitInView(slums.rect(), Qt::KeepAspectRatio);
 
     ui->graphicsView_hand->setScene(scene_hand);
+
 }
 
 // JOSTAIN ****N SYYSTÄ KUN KOITTAA SIIRTÄÄ AGENTTIA LOKAATIOSTA TOISEEN
