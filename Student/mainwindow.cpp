@@ -124,7 +124,7 @@ void MainWindow::agentClicked()
         auto c = std::dynamic_pointer_cast<Agent>(card);
         pts += c->connections();
     }
-    ui->textBrowser_2->setText(game_->currentPlayer()->name() + " has" + pts + " points");
+    ui->textBrowser_2->setText(game_->currentPlayer()->name() + QStringLiteral(" has %1 points").arg(pts));
     clearScene(scene_actions);
 
     auto button = qobject_cast<QPushButton *>(sender());
@@ -323,6 +323,7 @@ void MainWindow::actionClicked()
 
 void MainWindow::nextPlayer()
 {
+    QString leaderboards;
     // Check if a player has won
     for (auto player : game_->players()) {
         unsigned short pts = 0;
@@ -332,8 +333,12 @@ void MainWindow::nextPlayer()
         if (pts >= WINNING_SCORE) {
             game_->setActive(false);
             winner_ = player;
+        } else {
+            leaderboards += player->name() + QStringLiteral(" has %1 points \n").arg(pts);
         }
     }
+    // Having set the game as inactive, we go through this function as usual, but eventually we reach
+    // the point at which the user(s) can only close the program.
     // Disables "previous players" buttons
     for (auto card : game_->currentPlayer()->cards()) {
         auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -343,15 +348,14 @@ void MainWindow::nextPlayer()
     game_->nextPlayer();
     currentPlayer_ = game_->currentPlayer();
 
-    // Enables next players buttons
+    // Enables next player's buttons
     for (auto card : game_->currentPlayer()->cards()) {
         auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
         button->setEnabled(true);
     }
 
     ui->textBrowser_2->clear();
-    ui->textBrowser_2->setText("The points of the current player among with some other status stuff:"
-                               " (a method should print this stuff out whenever the context browser isn't busy");
+    ui->textBrowser_2->setText(leaderboards);
 
     showCardsInHand();
     clearScene(scene_actions);
@@ -395,7 +399,7 @@ void MainWindow::setupUserInterface()
     scene_actions = new QGraphicsScene(ui->graphicsView_actions);
     scene_hand = new QGraphicsScene(ui->graphicsView_hand);
 
-
+    // Set alignments and background images
     ui->graphicsView->setScene(scene_1);
     ui->graphicsView->setAlignment(Qt::AlignCenter);
     ui->graphicsView_2->setScene(scene_2);
@@ -481,7 +485,7 @@ void MainWindow::waitForClose()
     closeButton->resize(ACTION_WIDTH, ACTION_HEIGHT);
     scene_actions->addWidget(closeButton);
 
-    // Disables all buttons so Ready is the only thing you can press
+    // Disables all buttons so Close is the only thing you can press
     for (auto player : game_->players()) {
         for (auto card : player->cards()) {
             auto button = std::dynamic_pointer_cast<Agent>(card)->getButton();
@@ -491,7 +495,7 @@ void MainWindow::waitForClose()
     if (winner_ != nullptr) {
         ui->textBrowser_2->setText("Player " + winner_->name() + " has won");
     } else {
-        ui->textBrowser_2->setText("No player has won.");
+        ui->textBrowser_2->setText("No player has won."); // in case cancel was pressed in config window
     }
     connect(closeButton, &QAbstractButton::clicked, this, &MainWindow::endGame);
 }
@@ -519,7 +523,7 @@ void MainWindow::perform()
     try {
         runner_->run();
     } catch (Interface::ControlException& exception) {
-        ui->textBrowser_2->setText(exception.msg() + "\nThere has to be an enemy Agent on the location!");
+        ui->textBrowser_2->setText(exception.msg() + "\nThere has to be an enemy Agent in the location!");
     }
 
 }
