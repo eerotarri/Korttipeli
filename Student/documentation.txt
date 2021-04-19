@@ -115,8 +115,23 @@ kertoo voittajan. Tapahtumavalikkoon ilmestyy nappi CLOSE.
 
 CLOSE nappia painamalla pelaaja voi lopettaa pääättyneen pelin ja se sulkee pääikkunan.
 
+LUOKKAKAAVIO
 
+Projektimme luokkakaavio tuli lopulliseen muotoonsa vasta projektin edettyä jo pitkälle, koska kurssimoduulin
+salat aukesivat meille vasta projektin aikana. Työnjakokin olisi ollut helpompaa tehdä, jos olisimme perusteelisen
+perehtymisen pohjilta lyöneet luokkakaavion tiukempiin karsinoihin heti projektin alussa.
 
+Toteuttamistamme luokista logiikkaa hallinoi pääosin mainwindow -luokka. Mainwindow pitää huolen sekä agenttiluokan
+että kurssikoodin kanssa kommunikoimisesta ja edellä mainittujen attribuuttien päivittämisestä, sekä
+päivittää myös pelaajien näkemän grafiikan. Agentti -luokka hallinnoi määrätyn rajapinnan metodeihin
+liittyviä tietoja, ja sen kautta pidetään kirjaa pelin etenemisestä.
+
+Luokka configurationwindow ainoastaan pohjustaa pelaajien määrän, pelaajien nimet ja vaikuttaa siihen, alkaako peli
+laisinkaan.
+
+Moveagentaction tarkastaa, onko liikkumista mahdollista toteuttaa, ja sikäli kun on, liikkuminen siirtyy suoritettavaksi.
+Killagentaction ja swindleagentaction toimivat samankaltaisesti. Niistä kumpikaan ei varsinaisesti tee muutoksia,
+ne vain toimvat kurssikoodin Runnerin määrämällä tavalla.
 
 TYÖNJAKO
 

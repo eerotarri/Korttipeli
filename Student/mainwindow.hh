@@ -77,7 +77,7 @@ public:
      * @brief Operaatioiden mahdollisuudet onnistua (kymmenestä)
      */
     static const int KILL_CHANCE = 6;
-    static const int SWINDLE_CHANCE = 4;
+    static const int SWINDLE_CHANCE = 3;
 
     /**
      * @brief Pistemäärä, jonka pelaaja tarvitsee voittaakseen
