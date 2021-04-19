@@ -51,6 +51,7 @@ public slots:
     void nextPlayer();
     void swindleAction();
     void killAction();
+    unsigned int getSceneItemSize(unsigned int scene_id);
 
 private:
     Ui::MainWindow *ui;
@@ -84,6 +85,7 @@ private:
     void updateHand();
     void waitForReady();
     void perform();
+
 };
 
 #endif // MAINWINDOW_HH
