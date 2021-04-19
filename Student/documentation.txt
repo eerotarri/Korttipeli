@@ -1,0 +1,139 @@
+#############################################################################
+# TIE-024x Programming 3: Spring 2021                                       #
+# Projekti: Susipalatsi - peli valtakunnasta                                #
+# Description: Susipalatsi pelin ohje- ja dokumentaatiotiedosto.            #
+#                                                                           #
+# Ohjelman kehittäjä(t)                                                     #
+#                                                                           #
+# Nimi: Eero Tarri                                                          #
+# Opiskelijanumero: H283568                                                 #
+# UserID: tarri                                                             #
+# E-Mail: eero.tarri@tuni.fi                                                #
+#                                                                           #
+# Nimi: Niilo Klapuri                                                       #
+# Opiskelijanumero: H296237                                                 #
+# UserID: fknikl                                                            #
+# E-Mail: niilo.klapuri@tuni.fi                                             #
+#############################################################################
+
+Ohjelma on pyritty tekemään minimitoteutuksen mukaisesti.
+
+Susipalatsin tarkoituksena on saada riittävästi vaikutusvaltaa valtakunnan
+voittamiseen. Vaikutusvaltaa saa agenttien avulla. Peli eteneen niin, että
+jokaisella vuorolla pelaajalla on mahdollisuus liikuttaa yhtä agenttia ja sen
+lisäksi suorittaa jokin operaatio. Liikkumista ei ole välttämätöntä toteuttaa,
+mutta joka vuorolla on suoritettava operaatio. Ensimmäisellä vuorolla ei siis
+pääse eteenpäin liikkumatta, sillä operaatioita ei voi suorittaa, jos yhtään
+korttia ei ole pelialueella, vaan ne ovat kaikki kädessä. Liikkuminen sulkee
+loput pelaajan agentit siltä vuorolta, joten liikkuvan agentin on myös
+suoritettava operaatio.
+
+Operaatioita on kahdenlaisia, huijaamisoperaatio sekä tappamisoperaatio.
+Huijaamisoperaatio on riskitön operaatio, jossa agentti pyrkii saamaan
+itselleen yhden vaikutusvaltapisteen. Huijaamisella on 60% todennäköisyys
+onnistua, mutta siinä ei ole riskiä menettää pisteitä.
+Tappamisoperaatio on isoriskinen operaatio. Samassa sijainnissa olevan
+vihollisen agentin voi yrittää tappaa. Tappamisella on 40% todennäköisyys
+onnistua. Onnistuessaan agentti saa vastustajan agentin kaiken vaikutusvallan
+ja vastustajan agentti palautuu vastustajan käteen. Epäonnistuessaan agentti
+menettää kaiken vaikutusvaltansa, mutta pysyy paikoillaa ja vuoro vaihtuu
+seuraavalle pelaajalle.
+
+Peli päättyy, kun joku pelaajista on saanut agenteilleen yhteensä 10
+vaikutusvaltapistettä. Vaikutusvaltapisteet tarkastetaan aina vuoron
+vaihtuessa.
+
+### KONFIGURAATIOIKKUNA ###
+
+Ennen peliä on konfiguraatioikkuna, johon asetetaan pelaajien määrä ja
+sen mukainen määrä pelaajien avatarin nimiä niihen tarkoitettuihin laatikoihin.
+
+AMOINT OF PLAYERS (2-4) spinBoxin numeron muuttaminen muuttaa auki olevien
+pelaajien nimille tarkotetuiden laatikoiden sulkemiseen tai avaamiseen.
+Laatikoita on aina yhtä paljon auki, kuin amountOfPlayersSpinBox osoittaa.
+
+PELAAJIEN NIMET 1-4 lineEditteihin kirjoitetaan pelaajien halutut nimet.
+
+### PÄÄIKKUNA ###
+
+HAND on ruutu, josta vuorossa oleva pelaaja näkee omat agenttinsa ja voi
+suorittaa liikkeitä tai operaatioita niille, erityisesti pelin alussa, kun
+ei ole vielä ehditty lähettämään agentteja pelialueelle.
+
+CASTLE, MARKETPLACE, FOREST, SLUMS
+ovat ruutuja, joissa agentti voi suorittaa operaatioita ja kasvattaa
+vaikutusvaltaansa. Agentteja voi liikuttaa sijaintien välillä Move to
+-napilla.
+
+Näiden ruutujen lisäksi on kaksi pystysuunnassa pitkää ruutua scene_actions
+sekä textBrowser_2.
+SCENE_ACTIONS ruutu on näistä vasemmanpuoleinen. Ruutuun tulee kaikki
+liikkumiseen ja operaatioihin tarvittavat napit.
+TEXTBROWSER_2 ruutuun kirjoitetaan kaikki pelaajalle oleellinen tieto,
+kuten pisteet, tilannetieto ja virheilmoitus, jos operaatio ei ole
+suoritettavissa, esimerkiksi jos pelialueella ei ole vihollisia, tappamisoperaatiota
+ei voi suorittaa.
+
+Pelin alussa pelaajalla ei ole muita vaihtoehtoja, kuin pelata jokin HAND
+ruudussa olevista agenteista johonkin sijaintiin.
+Kädessä olevaa agenttia klikatessa tapahtumavalikkoon ilmestyy kolme vaihtoehtoa.
+Vaihtoehtoja ovat MOVE TO, SWINDLE ja STAB COMPETITOR. Näistä napeista ainoastaan
+MOVE TO on auki, jos agentti on kädessä. Agenttia, jolle haluaa suorittaa operaation
+voi vielä tässä vaiheessa vaihtaa.
+
+LIIKKUMINEN
+
+MOVE TO nappia painaessa tapahtumavalikkoon vaihtuu neljä uutta nappia, joissta lukee
+sijaintien nimet CASTLE, MARKETPLACE, FOREST ja SLUMS. Agenttia, jolle haluaa suorittaa
+operaation voi vielä tässä vaiheessa vaihtaa.
+
+CASTLE nappia painaessa agentti siirtyy Castle-alueelle ja liikkumismahdollisuus menee umpeen.
+MARKETPLACE nappia painaessa agentti siirtyy Marketplace-alueelle ja liikkumismahdollisuus menee umpeen.
+FOREST nappia painaessa agentti siirtyy Forest-alueelle ja liikkumismahdollisuus menee umpeen.
+SLUMS nappia painaessa agentti siirtyy Slums-alueelle ja liikkumismahdollisuus menee umpeen.
+Tämän jälkeen agenttia ei voi enää vaihtaa, mutta vuoro ei vielä vaihdu.
+
+OPERAATIOT
+
+SWINDLE nappi aukeaa, kun agenttia klikataan sen ollessa jollakin pelialueella. Napista
+tapahtuu huijaamisoperaatio. Tällä agentti voi saada vaikutusvaltaa riskittä. SWINDLE nappi johtaa
+vuoron vaihtumiseen, jota edeltää ruutu, jossa odotetaan pelaajan olevan valmis.
+
+STAB COMPETITOR nappi aukeaa, kun agenttia klikataan sen ollessa jollakin pelialueella. Napista
+tapahtuu tappamisoperaatio. Tällä agentti voi viedä samassa sijainnissa olevan vihollisagentin
+vaikutusvallan, mutta riskeeraa myös menettävänsä oman vaikutusvaltansa. STAB COMPETITOR nappi
+johtaa vuoron vaihtumiseen, jota edeltää ruutu, jossa odotetaan pelaajan olevan valmis.
+
+ODOTUSRUUDUT
+
+READY nappi ilmestyy, kun pelaaja ei voi enää tehdä siirtoja vuoronsa aikana. READY-napin aikana
+textBrowserista näkee pelaajien pistetilanteen. READY-nappia painamalla vuoro siirtyy seuraavalle
+pelaajalle.
+
+Kun joku pelaajista on saavuttanut tarvittavan määrän pisteitä (10) peli päättyy, textBrowser_2
+kertoo voittajan. Tapahtumavalikkoon ilmestyy nappi CLOSE.
+
+CLOSE nappia painamalla pelaaja voi lopettaa pääättyneen pelin ja se sulkee pääikkunan.
+
+
+
+
+TYÖNJAKO
+
+Aloitimme perehtymällä kukin omiin osa-alueisiimme kurssin koodimoduulista. Eero keskittyi
+graafisen käyttöliittymän käyttökelpoiseksi saamiseen, Niilo agenttiluokan pohjustamiseen.
+Projektin edetessä työnjako alkoi eriämään alunperin sovitusta, koska molemmat kohtasivat
+ongelmia, joihin toisella oli ehdottaa ratkaisu. Tapasimme tehdä projektia simultaanisti
+molemmat samassa paikassa, ja siten pystyimme nopeasti synkronoimaan edistymisiämme ja
+sopimaan lennosta, mihin kukin seuraavaksi keskittyisi. Projektin alkupuolella "piinapenkissä"
+istui työparista toinen, toisen samalla etsien ratkaisuja esimerkiksi syntaksiongelmiin,
+koska työstettäviä kohteita oli vähemmän. Projektin edettyä päädyimme kuitenkin välillä
+työstämään asioita, jotka olivat turhankin lähellä toisiaan.
+
+Projektin aikana kävi ilmeiseksi, että luokkakaavioon ja kurssin koodimoduuliin perehtymiseen
+olisi sopinut panostaa enemmän. Päädyimme työstämään yksittäisiä koodipuolen asioita ja
+koodimoduulin tulkitsemisia kerrallaan, koska pohjatyötä olisi pitänyt tehdä enemmän.
+
+Luokkakaavio konkretisoitui vasta noin projektin puolessa välissä, kun jouduimme siirtämään
+toiminnallisuuksiavaadittujen rajapintojen piiriin. Alkuperäiset tilapäistoteutuksemme
+olivat monessa tapauksessa aivan erilaisiakuin mitä vaadittiin.

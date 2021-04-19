@@ -52,3 +52,6 @@ HEADERS += \
 
 RESOURCES += \
     student_resources.qrc
+
+DISTFILES += \
+    documentation.txt
